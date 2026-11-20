@@ -145,6 +145,82 @@
     cursor: pointer;
     transition: border-color 0.15s;
   }
+  .nav-link-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: var(--surface-2);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 5px 11px;
+    font-size: 0.80rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: border-color 0.15s, color 0.15s;
+  }
+  .nav-link-btn:hover, .theme-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .nav-link-primary {
+    background: var(--info-bg);
+    color: var(--info);
+    border-color: rgba(56, 189, 248, 0.40);
+  }
+  .t86-panel {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px dashed var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .t86-panel-hdr {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+  }
+  .t86-panel-title {
+    font-size: 0.86rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .t86-mini-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .t86-mini-row {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 6px 9px;
+    font-size: 0.76rem;
+  }
+  .t86-mini-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 2px;
+  }
+  .t86-mini-sec {
+    color: var(--muted);
+    font-size: 0.73rem;
+    line-height: 1.4;
+  }
+  .t86-cross-note {
+    font-size: 0.75rem;
+    color: var(--muted);
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 6px 9px;
+  }
   .theme-btn:hover { border-color: var(--accent); }
 
   /* Section A: 6 KPI Cards */
@@ -616,6 +692,7 @@
       </div>
       <div class="header-actions">
         <span class="pill badge-warn">距 202611F3 結算 1 日</span>
+        <a class="nav-link-btn nav-link-primary" href="./t86_report_20261119.html">🏛️ 現貨 T86 族群 Top 20</a><a class="nav-link-btn" href="./index.html">📚 報告目錄</a>
         <button id="themeToggle" class="theme-btn" type="button">🌓 切換淺色/深色</button>
       </div>
     </div>
@@ -724,6 +801,7 @@
 <div class="flow-row flow-total"><div class="flow-label">三大法人合計</div><div class="flow-track"><div class="flow-bar down" style="width:100.0%"></div></div><div class="flow-val num down">-432.25 億</div></div>
       </div>
       <div class="sub-grid-3"><div class="stat-box"><div class="stat-lbl">外資臺指期淨口數</div><div class="stat-val num down">-99,219 口</div><div class="stat-sub num">增減 <span class="up">+219</span> ｜ -7,661.22 億</div></div><div class="stat-box"><div class="stat-lbl">投信臺指期淨口數</div><div class="stat-val num flat">+91,791 口</div><div class="stat-sub num">單日增減 <span class="down">-1,782 口</span></div></div><div class="stat-box"><div class="stat-lbl">自營商臺指期淨口數</div><div class="stat-val num flat">-1,455 口</div><div class="stat-sub num">單日增減 <span class="up">+2 口</span></div></div></div><div class="sub-grid-3" style="margin-top:10px"><div class="stat-box"><div class="stat-lbl">前五大特定法人 (近月)</div><div class="stat-val num up">+24,932 口</div></div><div class="stat-box"><div class="stat-lbl">前十大特定法人 (近月)</div><div class="stat-val num up">+3,952 口</div><div class="stat-sub num">增減 <span class="down">-1,890</span></div></div><div class="stat-box"><div class="stat-lbl">前十大特定法人 (全月)</div><div class="stat-val num up">+3,736 口</div><div class="stat-sub num">增減 <span class="down">-1,931</span></div></div></div><p class="footnote">註：投信臺指期總淨多單多屬正 2 ETF 結構性部位，不宜直接與外資空單相抵；方向判讀聚焦「單日增減」與「特定法人近月淨部位」。</p>
+      <div class="t86-panel"><div class="t86-panel-hdr"><div class="t86-panel-title">🏛️ 現貨三大法人 Top 20 族群集中與操作意圖</div><div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap"><span class="mini-pill badge-info">T86 2026/11/19</span><a class="nav-link-btn" style="padding:3px 9px;font-size:0.74rem" href="./t86_report_20261119.html">完整分析 →</a></div></div><div class="t86-mini-list"><div class="t86-mini-row"><div class="t86-mini-top"><span><strong>三大法人綜合</strong> <span class="num down">(-437.79 億)</span></span><span class="mini-pill badge-warn">個股與ETF背離換手</span></div><div class="t86-mini-sec"><span class="up">買：</span>AI散熱與電源機殼(4檔 +70.9億/28%) ｜ <span class="down">賣：</span>半導體製造與封測(3檔 -97.4億/31%)</div></div><div class="t86-mini-row"><div class="t86-mini-top"><span><strong>外資</strong> <span class="num down">(-224.68 億)</span></span><span class="mini-pill badge-warn">提款權值／族群高低位換股</span></div><div class="t86-mini-sec"><span class="up">買：</span>AI散熱與電源機殼(3檔 +58.8億/21%) ｜ <span class="down">賣：</span>半導體製造與封測(3檔 -214.1億/47%)</div></div><div class="t86-mini-row"><div class="t86-mini-top"><span><strong>投信</strong> <span class="num up">(+13.53 億)</span></span><span class="mini-pill badge-neutral">換股調整／防禦配置</span></div><div class="t86-mini-sec"><span class="up">買：</span>AI散熱與電源機殼(2檔 +31.8億/25%) ｜ <span class="down">賣：</span>金融金控(5檔 -19.7億/18%)</div></div><div class="t86-mini-row"><div class="t86-mini-top"><span><strong>自營商(自行)</strong> <span class="num down">(-17.92 億)</span></span><span class="mini-pill badge-down">短線了結降部位</span></div><div class="t86-mini-sec"><span class="up">買：</span>AI伺服器與組裝(3檔 +1.1億/23%) ｜ <span class="down">賣：</span>光學與面板顯示(3檔 -5.6億/29%)</div></div><div class="t86-mini-row"><div class="t86-mini-top"><span><strong>自營商(避險)</strong> <span class="num down">(-208.73 億)</span></span><span class="mini-pill badge-warn">ETF 造市折價套利／權證對沖</span></div><div class="t86-mini-sec"><span class="up">買：</span>半導體製造與封測(3檔 +101.0億/67%) ｜ <span class="down">賣：</span>ETF-市值與科技(4檔 -176.8億/47%)</div></div></div><div class="t86-cross-note">土洋個股交集：同買（<strong>奇鋐(3017)、世芯-KY(3661)</strong>）｜投信低接外資賣（<strong>台積電(2330)、聯發科(2454)、貿聯-KY(3665)、國泰金(2882)</strong>）</div></div>
     </div>
 
     <div class="card">
