@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>臺指期權盤後戰情儀表板 — 2026/11/20 夜盤（盤後）</title>
+<style>
+  :root, html[data-theme="dark"] {
+    --bg: #0b1120;
+    --surface: #111827;
+    --surface-2: #1a2335;
+    --surface-3: #0f172a;
+    --border: #293548;
+    --text: #f1f5f9;
+    --muted: #94a3b8;
+    --up: #f87171;
+    --up-bg: rgba(248, 113, 113, 0.14);
+    --down: #34d399;
+    --down-bg: rgba(52, 211, 153, 0.14);
+    --warn: #fbbf24;
+    --warn-bg: rgba(251, 191, 36, 0.15);
+    --info: #38bdf8;
+    --info-bg: rgba(56, 189, 248, 0.14);
+    --call: #fb923c;
+    --call-bg: rgba(251, 146, 60, 0.16);
+    --put: #2dd4bf;
+    --put-bg: rgba(45, 212, 191, 0.16);
+    --accent: #60a5fa;
+    --focus-col: rgba(96, 165, 250, 0.08);
+    --shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+  }
+  html[data-theme="light"] {
+    --bg: #f1f5f9;
+    --surface: #ffffff;
+    --surface-2: #f8fafc;
+    --surface-3: #e2e8f0;
+    --border: #cbd5e1;
+    --text: #0f172a;
+    --muted: #475569;
+    --up: #dc2626;
+    --up-bg: rgba(220, 38, 38, 0.10);
+    --down: #16a34a;
+    --down-bg: rgba(22, 163, 74, 0.10);
+    --warn: #d97706;
+    --warn-bg: rgba(217, 119, 6, 0.12);
+    --info: #0284c7;
+    --info-bg: rgba(2, 132, 199, 0.10);
+    --call: #ea580c;
+    --call-bg: rgba(234, 88, 12, 0.12);
+    --put: #0d9488;
+    --put-bg: rgba(13, 148, 136, 0.12);
+    --accent: #2563eb;
+    --focus-col: rgba(37, 99, 235, 0.07);
+    --shadow: 0 4px 14px rgba(15, 23, 42, 0.07);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, -apple-system, sans-serif;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  .num { font-variant-numeric: tabular-nums; }
+  .up { color: var(--up); }
+  .down { color: var(--down); }
+  .flat { color: var(--text); }
+  .warn-text { color: var(--warn); }
+  .info-text { color: var(--info); }
+  .muted { color: var(--muted); }
+  .text-right { text-align: right; }
+
+  .container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 18px 20px 40px;
+  }
+
+  /* Header */
+  .dash-header {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px 20px;
+    box-shadow: var(--shadow);
+    margin-bottom: 16px;
+  }
+  .header-top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .header-title-group {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+  }
+  h1 {
+    margin: 0;
+    font-size: 1.35rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+  }
+  .header-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+  }
+  .header-sub {
+    margin: 8px 0 0;
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+
+  /* Pills & Badges */
+  .pill, .mini-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .pill-lg { padding: 4px 12px; font-size: 0.85rem; }
+  .badge-up { background: var(--up-bg); color: var(--up); border: 1px solid rgba(248, 113, 113, 0.35); }
+  .badge-down { background: var(--down-bg); color: var(--down); border: 1px solid rgba(52, 211, 153, 0.35); }
+  .badge-warn { background: var(--warn-bg); color: var(--warn); border: 1px solid rgba(251, 191, 36, 0.35); }
+  .badge-info { background: var(--info-bg); color: var(--info); border: 1px solid rgba(56, 189, 248, 0.35); }
+  .badge-neutral { background: var(--surface-2); color: var(--muted); border: 1px solid var(--border); }
+
+  .theme-btn {
+    background: var(--surface-2);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 5px 11px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: border-color 0.15s;
+  }
+  .nav-link-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: var(--surface-2);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 5px 11px;
+    font-size: 0.80rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: border-color 0.15s, color 0.15s;
+  }
+  .nav-link-btn:hover, .theme-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .nav-link-primary {
+    background: var(--info-bg);
+    color: var(--info);
+    border-color: rgba(56, 189, 248, 0.40);
+  }
+  .t86-panel {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px dashed var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .t86-panel-hdr {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+  }
+  .t86-panel-title {
+    font-size: 0.86rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .t86-mini-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .t86-mini-row {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 6px 9px;
+    font-size: 0.76rem;
+  }
+  .t86-mini-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 2px;
+  }
+  .t86-mini-sec {
+    color: var(--muted);
+    font-size: 0.73rem;
+    line-height: 1.4;
+  }
+  .t86-cross-note {
+    font-size: 0.75rem;
+    color: var(--muted);
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 6px 9px;
+  }
+  .disclaimer-footer {
+    margin-top: 16px;
+    background: var(--surface-2);
+    border-left: 4px solid var(--warn);
+    font-size: 0.78rem;
+    color: var(--muted);
+    line-height: 1.65;
+  }
+  .disclaimer-title {
+    font-size: 0.86rem;
+    font-weight: 700;
+    color: var(--warn);
+    margin-bottom: 6px;
+  }
+  .disclaimer-footer p { margin: 0 0 4px; }
+  .disclaimer-footer p:last-child { margin-bottom: 0; }
+  .disclaimer-footer strong { color: var(--text); font-weight: 600; }
+  .theme-btn:hover { border-color: var(--accent); }
+
+  /* Section A: 6 KPI Cards */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  @media (max-width: 1240px) { .kpi-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  @media (max-width: 680px) { .kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .kpi-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 13px 14px;
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 6px;
+  }
+  .kpi-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    font-size: 0.78rem;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  .kpi-val {
+    font-size: 1.38rem;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+  .kpi-val-sm {
+    font-size: 1.02rem;
+    font-weight: 700;
+    line-height: 1.35;
+  }
+  .kpi-sub {
+    font-size: 0.76rem;
+    color: var(--muted);
+    line-height: 1.35;
+  }
+
+  /* Cards & Panels */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px 18px;
+    box-shadow: var(--shadow);
+  }
+  .card-title-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .card-title {
+    margin: 0;
+    font-size: 1.02rem;
+    font-weight: 700;
+  }
+
+  /* Section B: 2-column Tactical */
+  .tactical-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
+    gap: 16px;
+    margin-bottom: 16px;
+    align-items: start;
+  }
+  @media (max-width: 1024px) { .tactical-grid { grid-template-columns: 1fr; } }
+
+  .right-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  /* Tabs & Filter Buttons */
+  .controls-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .btn-group {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    background: var(--surface-3);
+    padding: 3px;
+    border-radius: 9px;
+    border: 1px solid var(--border);
+  }
+  .tab-btn {
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .tab-btn.active {
+    background: var(--surface-2);
+    color: var(--text);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  }
+
+  .oi-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    font-size: 0.78rem;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .legend-item { display: inline-flex; align-items: center; gap: 5px; }
+  .dot { width: 9px; height: 9px; border-radius: 2px; display: inline-block; }
+  .call-dot { background: var(--call); }
+  .put-dot { background: var(--put); }
+  .up-dot { background: var(--up); }
+  .down-dot { background: var(--down); }
+  .warn-dot { background: var(--warn); }
+  .info-dot { background: var(--info); }
+
+  .chart-box {
+    position: relative;
+    width: 100%;
+    overflow-x: auto;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 8px;
+  }
+  .oi-svg {
+    width: 100%;
+    min-width: 520px;
+    display: block;
+  }
+  .oi-tooltip {
+    position: fixed;
+    pointer-events: none;
+    z-index: 50;
+    background: var(--surface);
+    border: 1px solid var(--accent);
+    border-radius: 8px;
+    padding: 8px 11px;
+    font-size: 0.78rem;
+    box-shadow: var(--shadow);
+    display: none;
+    min-width: 175px;
+  }
+  .summary-pills {
+    margin-top: 12px;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+  }
+  @media (max-width: 680px) { .summary-pills { grid-template-columns: 1fr; } }
+  .sum-pill-box {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    padding: 8px 10px;
+    font-size: 0.78rem;
+  }
+  .sum-pill-lbl { color: var(--muted); font-size: 0.73rem; margin-bottom: 2px; }
+  .sum-pill-val { font-weight: 700; }
+  .layer-notes {
+    margin-top: 10px;
+    font-size: 0.8rem;
+    color: var(--muted);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  /* Price Ladder */
+  .ladder-list {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  .ladder-row {
+    display: grid;
+    grid-template-columns: 78px 66px 1fr;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 9px;
+    border-radius: 8px;
+    background: var(--surface-2);
+    border: 1px solid transparent;
+    font-size: 0.8rem;
+  }
+  .ladder-row.ladder-spot {
+    background: var(--info-bg);
+    border-color: var(--accent);
+  }
+  .ladder-price { font-weight: 700; font-size: 0.88rem; }
+  .ladder-tag {
+    text-align: center;
+    padding: 2px 6px;
+    border-radius: 6px;
+    font-size: 0.72rem;
+    font-weight: 700;
+  }
+  .tag-res { background: var(--call-bg); color: var(--call); }
+  .tag-sup { background: var(--put-bg); color: var(--put); }
+  .tag-mid { background: var(--warn-bg); color: var(--warn); }
+  .tag-spot { background: var(--accent); color: #fff; }
+  .ladder-src { font-weight: 600; color: var(--text); }
+  .ladder-det { font-size: 0.74rem; color: var(--muted); }
+
+  /* Alerts */
+  .alert-list { display: flex; flex-direction: column; gap: 8px; }
+  .alert-item {
+    display: flex;
+    gap: 10px;
+    padding: 9px 11px;
+    border-radius: 9px;
+    background: var(--surface-2);
+    border-left: 3px solid var(--info);
+    font-size: 0.8rem;
+  }
+  .alert-warn { border-left-color: var(--warn); }
+  .alert-danger { border-left-color: var(--up); background: var(--up-bg); }
+  .alert-icon { font-size: 1rem; line-height: 1.3; }
+  .alert-title { font-weight: 700; margin-bottom: 2px; }
+  .alert-desc { color: var(--muted); font-size: 0.77rem; }
+
+  /* Section C: Institutional Flows */
+  .inst-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+  @media (max-width: 1024px) { .inst-grid { grid-template-columns: 1fr; } }
+
+  .flow-bars { display: flex; flex-direction: column; gap: 7px; margin-bottom: 14px; }
+  .flow-row {
+    display: grid;
+    grid-template-columns: 112px 1fr 84px;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.81rem;
+  }
+  .flow-sub .flow-label { color: var(--muted); font-size: 0.76rem; padding-left: 4px; }
+  .flow-total { border-top: 1px dashed var(--border); padding-top: 6px; font-weight: 700; }
+  .flow-track {
+    height: 10px;
+    background: var(--surface-3);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .flow-bar { height: 100%; border-radius: 999px; }
+  .flow-bar.up { background: var(--up); }
+  .flow-bar.down { background: var(--down); }
+  .flow-bar.flat { background: var(--muted); }
+  .flow-val { text-align: right; font-weight: 700; }
+
+  .sub-grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+  }
+  @media (max-width: 600px) { .sub-grid-3 { grid-template-columns: 1fr; } }
+  .stat-box {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    padding: 8px 10px;
+  }
+  .stat-lbl { font-size: 0.73rem; color: var(--muted); }
+  .stat-val { font-size: 0.96rem; font-weight: 700; margin-top: 2px; }
+  .stat-sub { font-size: 0.72rem; color: var(--muted); margin-top: 2px; }
+
+  /* Tables */
+  .table-wrap { width: 100%; overflow-x: auto; }
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8rem;
+  }
+  .data-table th, .data-table td {
+    padding: 7px 9px;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  .data-table th {
+    color: var(--muted);
+    font-weight: 600;
+    font-size: 0.75rem;
+    background: var(--surface-2);
+  }
+  .col-focus { background: var(--focus-col); }
+  .cp-pill {
+    padding: 2px 7px;
+    border-radius: 6px;
+    font-size: 0.73rem;
+    font-weight: 700;
+  }
+  .cp-call { background: var(--call-bg); color: var(--call); }
+  .cp-put { background: var(--put-bg); color: var(--put); }
+  .footnote { margin: 8px 0 0; font-size: 0.74rem; color: var(--muted); }
+  .empty-box {
+    padding: 16px;
+    text-align: center;
+    color: var(--muted);
+    background: var(--surface-2);
+    border-radius: 10px;
+    font-size: 0.85rem;
+  }
+
+  /* Section D: 5-day Trend */
+  .trend-charts-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+  }
+  @media (max-width: 960px) { .trend-charts-grid { grid-template-columns: 1fr; } }
+  .mini-chart-card {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 12px;
+  }
+  .mini-chart-hdr {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .legend-inline {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.72rem;
+    color: var(--muted);
+    font-weight: 500;
+  }
+  .mini-svg { width: 100%; height: auto; display: block; }
+  .svg-tick { font-size: 10px; fill: var(--muted); font-variant-numeric: tabular-nums; }
+
+  /* Section A2: Insights & Playbook */
+  .insights-card {
+    margin-bottom: 16px;
+    border-color: rgba(96, 165, 250, 0.35);
+  }
+  .insight-banner {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--accent);
+    border-radius: 10px;
+    padding: 10px 13px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 14px;
+    line-height: 1.5;
+  }
+  .insights-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+    gap: 16px;
+    align-items: start;
+  }
+  @media (max-width: 1024px) { .insights-layout { grid-template-columns: 1fr; } }
+  .subsec-title {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--muted);
+    letter-spacing: 0.03em;
+    margin-bottom: 8px;
+  }
+  .insight-list, .playbook-list {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+  }
+  .insight-item {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--info);
+    border-radius: 10px;
+    padding: 9px 12px;
+  }
+  .insight-danger { border-left-color: var(--up); background: var(--up-bg); }
+  .insight-warn { border-left-color: var(--warn); }
+  .insight-up { border-left-color: var(--up); }
+  .insight-down { border-left-color: var(--down); }
+  .insight-info { border-left-color: var(--info); }
+  .insight-item-hdr {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 7px;
+    margin-bottom: 4px;
+  }
+  .insight-item-title {
+    font-size: 0.86rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .insight-item-body {
+    font-size: 0.79rem;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  .playbook-item {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 12px;
+  }
+  .playbook-step {
+    flex-shrink: 0;
+    width: 26px;
+    height: 26px;
+    border-radius: 7px;
+    background: var(--info-bg);
+    color: var(--accent);
+    border: 1px solid rgba(96, 165, 250, 0.35);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.76rem;
+    font-weight: 700;
+    margin-top: 1px;
+  }
+  .playbook-title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 3px;
+  }
+  .playbook-body {
+    font-size: 0.79rem;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header class="dash-header">
+    <div class="header-top">
+      <div class="header-title-group">
+        <h1>臺指期權盤後戰情儀表板</h1>
+        <span class="pill badge-neutral num">2026/11/20</span>
+        <span class="pill badge-neutral">夜盤（盤後）</span>
+        <span class="pill pill-lg badge-down">偏空警戒格局</span>
+      </div>
+      <div class="header-actions">
+        <span class="pill badge-warn">結算日換倉（已排除 202611F3）</span>
+        <a class="nav-link-btn nav-link-primary" href="./t86_report_20261120.html">🏛️ 現貨 T86 族群 Top 20</a><a class="nav-link-btn" href="./index.html">📚 報告目錄</a>
+        <button id="themeToggle" class="theme-btn" type="button">🌓 切換淺色/深色</button>
+      </div>
+    </div>
+    <p class="header-sub">現貨外資賣超 -94.13 億元；外資期貨淨口數變化溫和 (+1,356 口)；外資選擇權 Buy Call 淨契約金額明顯增加 (+768,979 千元)；P/C Ratio (OI) 降至 30.05% (&lt;90% 偏空架構)；TAIWAN VIX 單日跳升 +2.93，避險恐慌升溫 ｜ 夜盤成交 252,412 口（Call 134,747 / Put 117,665）｜ OI 採最近日盤 20261120</p>
+  </header>
+
+  <!-- Section A: 6 KPI Cards -->
+  <section class="kpi-grid" aria-label="核心盤勢指標">
+    <div class="kpi-card">
+      <div class="kpi-head"><span>加權指數 / 臺指期</span><span class="num muted">成交 9,323.2 億</span></div>
+      <div class="kpi-val num down">36,033.29</div>
+      <div class="kpi-sub num"><span class="down"><strong>-2,393.60 點</strong></span><br>TXF 202612 收 35,875 (-2,732)</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-head"><span>期現貨正逆價差</span><span class="mini-pill badge-down">大幅逆價差</span></div>
+      <div class="kpi-val num down">-158.29 點</div>
+      <div class="kpi-sub num">TXF 總 OI 129,679 口 ｜ 量 109,453 口</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-head"><span>外資期現貨籌碼</span><span class="mini-pill badge-neutral">TXF +1,356</span></div>
+      <div class="kpi-val-sm num">現貨 <span class="down">-94.13 億</span><br>期貨 <span class="up">-97,863 口</span></div>
+      <div class="kpi-sub num">投信期 -4,192 口 ｜ 自營避險 -290.16 億</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-head"><span>散戶多空比（反向）</span><span class="mini-pill badge-warn">⚠️ 散戶抄底警戒</span></div>
+      <div class="kpi-val num warn-text">微台 +52.99%</div>
+      <div class="kpi-sub num">淨 +47,192 口（-3,307）<br>小台 MTX -1.79%（-565 口）</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-head"><span>Put/Call Ratio (OI)</span><span class="mini-pill badge-warn">⚠️ 極度悲觀防軋空</span></div>
+      <div class="kpi-val num warn-text">30.05%</div>
+      <div class="kpi-sub num">Put 28,549 / Call 95,013 ｜ 量比 78.96%</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-head"><span>TAIWAN VIX</span><span class="mini-pill badge-warn">⚠️ 高波動降槓桿</span></div>
+      <div class="kpi-val num warn-text">52.20 <span style="font-size:0.88rem">(+2.93)</span></div>
+      <div class="kpi-sub">避險買盤與震幅放大，嚴控部位槓桿</div>
+    </div>
+  </section>
+
+  <!-- Section A2: Market Insights & Tactical Playbook -->
+  <section class="card insights-card" aria-label="盤後深度洞察與明日操作劇本"><div class="card-title-row"><h2 class="card-title">🎯 盤後深度洞察與明日操作劇本</h2><span class="pill pill-lg badge-down">偏空操作・防急彈洗盤</span></div><div class="insight-banner">外資期現貨持續偏空、散戶逆勢抄底至 +53.0%、自營避險大幅賣超助跌，但短線因 P/C Ratio 30.1% 極度悲觀 與 VIX 52.2 高波動，極易引發劇烈急彈與雙向洗盤，操作宜反彈遇壓偏空、嚴禁低檔追空。</div><div class="insights-layout"><div><div class="subsec-title">關鍵籌碼洞察</div><div class="insight-list"><div class="insight-item insight-info"><div class="insight-item-hdr"><span class="mini-pill badge-info">散戶反向</span><span class="insight-item-title">散戶多單出現鬆動減碼（微台 +52.99%），留意籌碼清洗進度</span></div><div class="insight-item-body num">微台散戶多空比近 5 日軌跡為 +33.9% → +36.6% → +43.0% → +55.4% → +53.0%；今日微台散戶淨部位 +47,192 口（單日 -3,307 口），多空比 +52.99%；小台為 -1.79%（淨 -565 口，單日 -2,539 口）。高檔套牢散戶開始減碼停損，若後續多空比持續收斂，反彈壓力將逐步減輕。</div></div><div class="insight-item insight-down"><div class="insight-item-hdr"><span class="mini-pill badge-down">外資與大額法人</span><span class="insight-item-title">外資現貨連 5 賣提款 -2,185.7 億，期貨近 10 萬口空單仍壓陣</span></div><div class="insight-item-body num">外資現貨已連賣 5 日累計 -2,185.7 億元（今日 -94.1 億）；臺指期淨未平倉 -97,863 口（僅微調 +1,356 口，空單仍紋絲不動、未見大幅獲利了結轉折）；前十大特定法人近月淨部位由近期 +8,208 口變動至 +2,973 口，今日單日 -979 口。</div></div><div class="insight-item insight-down"><div class="insight-item-hdr"><span class="mini-pill badge-down">自營與投信解碼</span><span class="insight-item-title">投信期貨近 4 日累計 -4,807 口</span></div><div class="insight-item-body num">自營自行買賣今日 -50.7 億；自營避險部位連 5 日賣超累計 -1,112.3 億（今日 -290.2 億），形成權證／選擇權對沖被動助跌賣壓；投信臺指期近 4 日累計變動 -4,807 口（今日 -4,192 口，總淨額 +87,599 口），反映正 2 ETF 隨波動減碼降低曝險。</div></div><div class="insight-item insight-warn"><div class="insight-item-hdr"><span class="mini-pill badge-warn">正逆價差</span><span class="insight-item-title">期現貨出現大幅逆價差 -158.29 點</span></div><div class="insight-item-body num">期貨相對現貨貼水擴大，代表法人與市場避險賣壓沉重；短線已反映偏空預期，急跌段不宜過度追空以防價差快速收斂反彈。</div></div><div class="insight-item insight-info"><div class="insight-item-hdr"><span class="mini-pill badge-info">選擇權真實流向</span><span class="insight-item-title">選擇權當日真實主力資金：投信 Call（-14.98 億）</span></div><div class="insight-item-body num">當日真實主力交易為投信當日淨賣 Call -23,050 口（-14.98 億）、外資當日淨買 Call +10,510 口（+8.61 億）、自營商當日淨買 Call -22,318 口（+3.28 億）。</div></div><div class="insight-item insight-info"><div class="insight-item-hdr"><span class="mini-pill badge-info">夜盤成交結構</span><span class="insight-item-title">夜盤總量 252,412 口（Call 成交略占優勢）</span></div><div class="insight-item-body num">夜盤 Call 成交 134,747 口 / Put 成交 117,665 口，日盤基準 P/C Ratio 為 30.05%；夜盤不更新未平倉與三大法人明細，支撐壓力牆暫沿用最近日盤結構。</div></div></div></div><div><div class="subsec-title">明日實戰操作劇本</div><div class="playbook-list"><div class="playbook-item"><div class="playbook-step num">01</div><div><div class="playbook-title">反彈壓力與偏空觀察區</div><div class="playbook-body num">短線反彈優先觀察 Max Pain 35,200 ｜ Pivot 中軸 36,370 ｜ 週選壓力牆 37,000 (244口)、38,000 (676口) ｜ R1 37,178。若反彈至此區出現量縮或上影線轉弱，是較具風報比的偏空觀察點，避免在急殺低檔追空。</div></div></div><div class="playbook-item"><div class="playbook-step num">02</div><div><div class="playbook-title">下檔支撐停利與倒莊警戒線</div><div class="playbook-body num">下檔依序關注 Pivot S1 35,068 ｜ 週選支撐牆 36,000 (401口)、34,500 (609口) ｜ S2 34,260。因 P/C Ratio 僅 30.1% 空頭擁擠，回測第一支撐帶時空單宜分批減碼落袋。若帶量貫破 34,500 最大 Put 地板，須防賣方停損對沖引發下殺加速（Gamma Squeeze）。</div></div></div><div class="playbook-item"><div class="playbook-step num">03</div><div><div class="playbook-title">結算特性與槓桿風控紀律</div><div class="playbook-body num">VIX 處於 52.20 高波動區，務必將期貨口數縮減至平常的 1/3～1/2 並拉寬停損，避免盤中數百點洗刷被雙巴。</div></div></div><div class="playbook-item"><div class="playbook-step num">04</div><div><div class="playbook-title">止跌翻多確認訊號（未出現前不搶長多）</div><div class="playbook-body num">須同時追蹤三大轉折訊號：微台散戶多空比明顯回落（結束接刀）、外資停止連賣現貨並大舉回補臺指期空單、自營避險賣壓收斂或轉為買超；未看到法人回補與散戶降溫前，所有急彈先視為跌深反彈處理。</div></div></div></div></div></div></section>
+
+  <!-- Section B: Interactive OI Wall + Price Ladder & Risks -->
+  <section class="tactical-grid">
+    <div class="card">
+      <div class="card-title-row">
+        <h2 class="card-title">選擇權 OI 支撐／壓力分佈牆 <span class="mini-pill badge-info">夜盤採用日盤 20261120 OI</span></h2>
+        <div id="rangeTabs" class="btn-group">
+          <button class="tab-btn active" data-range="near" type="button">近價平 ±3,500 點</button>
+          <button class="tab-btn" data-range="all" type="button">全履約價</button>
+        </div>
+      </div>
+      <div class="controls-bar">
+        <div id="contractTabs" class="btn-group"></div>
+        <div class="oi-legend">
+          <span class="legend-item"><i class="dot call-dot"></i>Call OI（壓力）</span>
+          <span class="legend-item"><i class="dot put-dot"></i>Put OI（支撐）</span>
+          <span class="legend-item"><span style="color:var(--accent)">---</span> 參考點位</span>
+          <span class="legend-item"><span style="color:var(--warn)">---</span> Max Pain</span>
+        </div>
+      </div>
+      <div class="chart-box">
+        <svg id="oiChartSvg" class="oi-svg" role="img" aria-label="選擇權各履約價未平倉分佈圖"></svg>
+      </div>
+      <div id="oiSummaryPills" class="summary-pills"></div>
+      <div id="oiLayerNotes" class="layer-notes"></div>
+    </div>
+
+    <div class="right-stack">
+      <div class="card">
+        <div class="card-title-row">
+          <h2 class="card-title">明日實戰價位階梯（高 → 低）</h2>
+          <span class="mini-pill badge-neutral">Pivot + 週選牆</span>
+        </div>
+        <div class="ladder-list">
+          <div class="ladder-row"><div class="ladder-price num">38,480</div><span class="ladder-tag tag-res">極端壓力</span><div class="ladder-meta"><div class="ladder-src">Pivot R2</div><div class="ladder-det">期貨 202612 當沖樞紐</div></div></div><div class="ladder-row"><div class="ladder-price num">38,000</div><span class="ladder-tag tag-res">Call 牆</span><div class="ladder-meta"><div class="ladder-src">202611W4 近價平壓力</div><div class="ladder-det">OI 676 口 (+676)</div></div></div><div class="ladder-row"><div class="ladder-price num">37,500</div><span class="ladder-tag tag-res">Call 牆</span><div class="ladder-meta"><div class="ladder-src">202611W4 近價平壓力</div><div class="ladder-det">OI 140 口 (+140)</div></div></div><div class="ladder-row"><div class="ladder-price num">37,178</div><span class="ladder-tag tag-res">第一壓力</span><div class="ladder-meta"><div class="ladder-src">Pivot R1</div><div class="ladder-det">期貨 202612 當沖樞紐</div></div></div><div class="ladder-row"><div class="ladder-price num">37,000</div><span class="ladder-tag tag-res">Call 牆</span><div class="ladder-meta"><div class="ladder-src">202611W4 近價平壓力</div><div class="ladder-det">OI 244 口 (+244)</div></div></div><div class="ladder-row"><div class="ladder-price num">36,370</div><span class="ladder-tag tag-mid">多空樞紐</span><div class="ladder-meta"><div class="ladder-src">Pivot 中軸</div><div class="ladder-det">期貨 202612 當沖樞紐</div></div></div><div class="ladder-row ladder-spot"><div class="ladder-price num">36,033.29</div><span class="ladder-tag tag-spot">加權現貨</span><div class="ladder-meta"><div class="ladder-src">TAIEX 收盤</div><div class="ladder-det">漲跌 -2,393.60</div></div></div><div class="ladder-row"><div class="ladder-price num">36,000</div><span class="ladder-tag tag-sup">Put 牆</span><div class="ladder-meta"><div class="ladder-src">202611W4 近價平支撐</div><div class="ladder-det">OI 401 口 (-125)</div></div></div><div class="ladder-row ladder-spot"><div class="ladder-price num">35,875</div><span class="ladder-tag tag-spot">臺指期</span><div class="ladder-meta"><div class="ladder-src">近月 202612 收盤</div><div class="ladder-det">漲跌 -2,732 ｜ 價差 -158.3</div></div></div><div class="ladder-row"><div class="ladder-price num">35,200</div><span class="ladder-tag tag-mid">Max Pain</span><div class="ladder-meta"><div class="ladder-src">202611W4 最大痛點</div><div class="ladder-det">結算磁吸參考區</div></div></div><div class="ladder-row"><div class="ladder-price num">35,068</div><span class="ladder-tag tag-sup">第一支撐</span><div class="ladder-meta"><div class="ladder-src">Pivot S1</div><div class="ladder-det">期貨 202612 當沖樞紐</div></div></div><div class="ladder-row"><div class="ladder-price num">35,000</div><span class="ladder-tag tag-sup">Put 牆</span><div class="ladder-meta"><div class="ladder-src">202611W4 近價平支撐</div><div class="ladder-det">OI 238 口 (+238)</div></div></div><div class="ladder-row"><div class="ladder-price num">34,500</div><span class="ladder-tag tag-sup">Put 牆</span><div class="ladder-meta"><div class="ladder-src">202611W4 近價平支撐</div><div class="ladder-det">OI 609 口 (+609)</div></div></div><div class="ladder-row"><div class="ladder-price num">34,260</div><span class="ladder-tag tag-sup">極端支撐</span><div class="ladder-meta"><div class="ladder-src">Pivot S2</div><div class="ladder-det">期貨 202612 當沖樞紐</div></div></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title-row">
+          <h2 class="card-title">結算時間與風險提醒</h2>
+        </div>
+        <div class="alert-list">
+          <div class="alert-item alert-info"><span class="alert-icon">ℹ️</span><div><div class="alert-title">結算日效應</div><div class="alert-desc">今日為週三或週五結算日，到期合約已無方向預測力，請專注觀察下一檔新週選之開倉最大 OI 區間變化。</div></div></div>
+<div class="alert-item alert-info"><span class="alert-icon">ℹ️</span><div><div class="alert-title">月選波段觀察（202612，剩 26 天）</div><div class="alert-desc">主力月選 202612 距結算尚有 26 天，波段大區間暫看 25,200 ～ 50,000。</div></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section C: Institutional Flows & Cross-Market -->
+  <section class="inst-grid">
+    <div class="card">
+      <div class="card-title-row">
+        <h2 class="card-title">現貨、臺指期與大額特定法人籌碼</h2>
+        
+      </div>
+      <div class="flow-bars">
+        <div class="flow-row"><div class="flow-label">外資</div><div class="flow-track"><div class="flow-bar down" style="width:18.0%"></div></div><div class="flow-val num down">-94.13 億</div></div>
+<div class="flow-row"><div class="flow-label">投信</div><div class="flow-track"><div class="flow-bar down" style="width:16.7%"></div></div><div class="flow-val num down">-87.49 億</div></div>
+<div class="flow-row"><div class="flow-label">自營商合計</div><div class="flow-track"><div class="flow-bar down" style="width:65.2%"></div></div><div class="flow-val num down">-340.84 億</div></div>
+<div class="flow-row flow-sub"><div class="flow-label">└ 自營自行買賣</div><div class="flow-track"><div class="flow-bar down" style="width:9.7%"></div></div><div class="flow-val num down">-50.68 億</div></div>
+<div class="flow-row flow-sub"><div class="flow-label">└ 自營避險</div><div class="flow-track"><div class="flow-bar down" style="width:55.5%"></div></div><div class="flow-val num down">-290.16 億</div></div>
+<div class="flow-row flow-total"><div class="flow-label">三大法人合計</div><div class="flow-track"><div class="flow-bar down" style="width:100.0%"></div></div><div class="flow-val num down">-522.46 億</div></div>
+      </div>
+      <div class="sub-grid-3"><div class="stat-box"><div class="stat-lbl">外資臺指期淨口數</div><div class="stat-val num down">-97,863 口</div><div class="stat-sub num">增減 <span class="up">+1,356</span> ｜ -7,007.12 億</div></div><div class="stat-box"><div class="stat-lbl">投信臺指期淨口數</div><div class="stat-val num flat">+87,599 口</div><div class="stat-sub num">單日增減 <span class="down">-4,192 口</span></div></div><div class="stat-box"><div class="stat-lbl">自營商臺指期淨口數</div><div class="stat-val num flat">+282 口</div><div class="stat-sub num">單日增減 <span class="up">+1,737 口</span></div></div></div><div class="sub-grid-3" style="margin-top:10px"><div class="stat-box"><div class="stat-lbl">前五大特定法人 (近月)</div><div class="stat-val num up">+22,389 口</div></div><div class="stat-box"><div class="stat-lbl">前十大特定法人 (近月)</div><div class="stat-val num up">+2,973 口</div><div class="stat-sub num">增減 <span class="down">-979</span></div></div><div class="stat-box"><div class="stat-lbl">前十大特定法人 (全月)</div><div class="stat-val num up">+2,689 口</div><div class="stat-sub num">增減 <span class="down">-1,047</span></div></div></div><p class="footnote">註：投信臺指期總淨多單多屬正 2 ETF 結構性部位，不宜直接與外資空單相抵；方向判讀聚焦「單日增減」與「特定法人近月淨部位」。</p>
+      <div class="t86-panel"><div class="t86-panel-hdr"><div class="t86-panel-title">🏛️ 現貨三大法人 Top 20 族群集中與操作意圖</div><div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap"><span class="mini-pill badge-info">T86 2026/11/20</span><a class="nav-link-btn" style="padding:3px 9px;font-size:0.74rem" href="./t86_report_20261120.html">完整分析 →</a></div></div><div class="t86-mini-list"><div class="t86-mini-row"><div class="t86-mini-top"><span><strong>三大法人綜合</strong> <span class="num down">(-508.58 億)</span></span><span class="mini-pill badge-warn">個股與ETF背離換手</span></div><div class="t86-mini-sec"><span class="up">買：</span>PCB與銅箔基板(4檔 +51.9億/21%) ｜ <span class="down">賣：</span>半導體製造與封測(2檔 -224.3億/62%)</div></div><div class="t86-mini-row"><div class="t86-mini-top"><span><strong>外資</strong> <span class="num down">(-89.09 億)</span></span><span class="mini-pill badge-warn">提款權值／族群高低位換股</span></div><div class="t86-mini-sec"><span class="up">買：</span>半導體製造與封測(2檔 +72.6億/27%) ｜ <span class="down">賣：</span>半導體製造與封測(2檔 -245.2億/59%)</div></div><div class="t86-mini-row"><div class="t86-mini-top"><span><strong>投信</strong> <span class="num down">(-88.37 億)</span></span><span class="mini-pill badge-down">基金贖回應對／獲利換股結帳</span></div><div class="t86-mini-sec"><span class="up">買：</span>PCB與銅箔基板(4檔 +27.4億/29%) ｜ <span class="down">賣：</span>半導體製造與封測(2檔 -105.4億/58%)</div></div><div class="t86-mini-row"><div class="t86-mini-top"><span><strong>自營商(自行)</strong> <span class="num down">(-50.60 億)</span></span><span class="mini-pill badge-down">短線了結降部位</span></div><div class="t86-mini-sec"><span class="up">買：</span>傳產塑化鋼鐵與民生(2檔 +1.9億/19%) ｜ <span class="down">賣：</span>IC設計與矽智財(3檔 -6.9億/43%)</div></div><div class="t86-mini-row"><div class="t86-mini-top"><span><strong>自營商(避險)</strong> <span class="num down">(-280.52 億)</span></span><span class="mini-pill badge-warn">ETF 造市折價套利／權證對沖</span></div><div class="t86-mini-sec"><span class="up">買：</span>半導體製造與封測(3檔 +103.3億/62%) ｜ <span class="down">賣：</span>ETF-市值與科技(4檔 -232.8億/48%)</div></div></div><div class="t86-cross-note">土洋個股交集：同買（<strong>無</strong>）｜投信低接外資賣（<strong>台達電(2308)、中華電(2412)、兆豐金(2886)、貿聯-KY(3665)</strong>）</div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title-row">
+        <h2 class="card-title">選擇權三大法人契約金額與當日真實交易</h2>
+        <span class="mini-pill badge-info">契約金額優先</span>
+      </div>
+      <div class="table-wrap"><table class="data-table"><thead><tr><th>法人</th><th>別</th><th class="text-right">買方金額</th><th class="text-right">賣方金額</th><th class="text-right">未平倉淨口數(增減)</th><th class="text-right">未平倉淨金額(含市值波動)</th><th class="text-right col-focus">當日真實交易淨口數 / 淨金額</th></tr></thead><tbody><tr><td><strong>自營商</strong></td><td><span class="cp-pill cp-call">Call</span></td><td class="num text-right">853,980 千</td><td class="num text-right">348,052 千</td><td class="num text-right">+7,959 <span class="muted">(-4,953)</span></td><td class="num text-right">+5.06 億 <span class="muted">(+253,734 千)</span></td><td class="num text-right col-focus up"><strong>-22,318 口</strong> / +3.28 億</td></tr><tr><td><strong>投信</strong></td><td><span class="cp-pill cp-call">Call</span></td><td class="num text-right">176 千</td><td class="num text-right">1,666,080 千</td><td class="num text-right">-30,285 <span class="muted">(+2,050)</span></td><td class="num text-right">-16.66 億 <span class="muted">(-1,048,771 千)</span></td><td class="num text-right col-focus down"><strong>-23,050 口</strong> / -14.98 億</td></tr><tr><td><strong>外資</strong></td><td><span class="cp-pill cp-call">Call</span></td><td class="num text-right">1,215,322 千</td><td class="num text-right">184,332 千</td><td class="num text-right">+15,155 <span class="muted">(+8,061)</span></td><td class="num text-right">+10.31 億 <span class="muted">(+768,979 千)</span></td><td class="num text-right col-focus up"><strong>+10,510 口</strong> / +8.61 億</td></tr><tr><td><strong>自營商</strong></td><td><span class="cp-pill cp-put">Put</span></td><td class="num text-right">1,738,669 千</td><td class="num text-right">1,583,889 千</td><td class="num text-right">+38 <span class="muted">(-1,082)</span></td><td class="num text-right">+1.55 億 <span class="muted">(+26,782 千)</span></td><td class="num text-right col-focus up"><strong>-12,389 口</strong> / +1.55 億</td></tr><tr><td><strong>投信</strong></td><td><span class="cp-pill cp-put">Put</span></td><td class="num text-right">19,360 千</td><td class="num text-right">0 千</td><td class="num text-right">+220 <span class="muted">(-20)</span></td><td class="num text-right">+0.19 億 <span class="muted">(+6,820 千)</span></td><td class="num text-right col-focus up"><strong>+400 口</strong> / +0.04 億</td></tr><tr><td><strong>外資</strong></td><td><span class="cp-pill cp-put">Put</span></td><td class="num text-right">4,003,353 千</td><td class="num text-right">3,700,552 千</td><td class="num text-right">+755 <span class="muted">(+546)</span></td><td class="num text-right">+3.03 億 <span class="muted">(+104,805 千)</span></td><td class="num text-right col-focus down"><strong>+754 口</strong> / -0.93 億</td></tr></tbody></table></div><p class="footnote">註：大行情日「未平倉淨金額增減」受權利金漲跌（市值波動）影響大，判讀法人當日真實進出場請優先對照右側高亮欄。</p>
+    </div>
+  </section>
+
+  <!-- Section D: 5-Day Cross-Market Trend -->
+  <section class="card">
+    <div class="card-title-row">
+      <h2 class="card-title">近 5 日跨市場籌碼趨勢</h2>
+      <span class="mini-pill badge-neutral">多日連貫驗證</span>
+    </div>
+    <div class="trend-charts-grid"><div class="mini-chart-card"><div class="mini-chart-hdr"><span>外資現貨 (實) vs. 自營避險 (框) 億元</span><span class="legend-inline"><i class="dot up-dot"></i>買超 <i class="dot down-dot"></i>賣超</span></div><svg viewBox="0 0 360 178" class="mini-svg" role="img" aria-label="外資現貨與自營避險金額趨勢">
+<line x1="42" y1="29.8" x2="348" y2="29.8" stroke="var(--muted)" stroke-width="1" stroke-dasharray="3,3" opacity="0.65"/>
+<text x="37" y="30" text-anchor="end" class="svg-tick">+50</text>
+<text x="37" y="32.8" text-anchor="end" class="svg-tick">0</text>
+<text x="37" y="150" text-anchor="end" class="svg-tick">-766</text>
+<rect x="57.1" y="29.8" width="14.0" height="110.2" rx="2" fill="var(--down)" opacity="0.9"><title>11/16 外資現貨: -701.9 億</title></rect>
+<rect x="74.1" y="29.8" width="14.0" height="45.5" rx="2" fill="var(--down)" fill-opacity="0.45" stroke="var(--down)" stroke-width="1"><title>11/16 自營避險: -290.2 億</title></rect>
+<text x="72.6" y="170" text-anchor="middle" class="svg-tick">11/16</text>
+<rect x="118.3" y="29.8" width="14.0" height="59.8" rx="2" fill="var(--down)" opacity="0.9"><title>11/17 外資現貨: -380.9 億</title></rect>
+<rect x="135.3" y="29.8" width="14.0" height="34.7" rx="2" fill="var(--down)" fill-opacity="0.45" stroke="var(--down)" stroke-width="1"><title>11/17 自營避險: -220.8 億</title></rect>
+<text x="133.8" y="170" text-anchor="middle" class="svg-tick">11/17</text>
+<rect x="179.5" y="29.8" width="14.0" height="120.2" rx="2" fill="var(--down)" opacity="0.9"><title>11/18 外資現貨: -765.6 億</title></rect>
+<rect x="196.5" y="29.8" width="14.0" height="15.2" rx="2" fill="var(--down)" fill-opacity="0.45" stroke="var(--down)" stroke-width="1"><title>11/18 自營避險: -96.7 億</title></rect>
+<text x="195.0" y="170" text-anchor="middle" class="svg-tick">11/18</text>
+<rect x="240.7" y="29.8" width="14.0" height="38.2" rx="2" fill="var(--down)" opacity="0.9"><title>11/19 外資現貨: -243.1 億</title></rect>
+<rect x="257.7" y="29.8" width="14.0" height="33.6" rx="2" fill="var(--down)" fill-opacity="0.45" stroke="var(--down)" stroke-width="1"><title>11/19 自營避險: -214.4 億</title></rect>
+<text x="256.2" y="170" text-anchor="middle" class="svg-tick">11/19</text>
+<rect x="301.9" y="29.8" width="14.0" height="14.8" rx="2" fill="var(--down)" opacity="0.9"><title>11/20 外資現貨: -94.1 億</title></rect>
+<rect x="318.9" y="29.8" width="14.0" height="45.5" rx="2" fill="var(--down)" fill-opacity="0.45" stroke="var(--down)" stroke-width="1"><title>11/20 自營避險: -290.2 億</title></rect>
+<text x="317.4" y="170" text-anchor="middle" class="svg-tick">11/20</text>
+</svg></div><div class="mini-chart-card"><div class="mini-chart-hdr"><span>散戶多空比 (%)</span><span class="legend-inline"><i class="dot warn-dot"></i>微台 <i class="dot info-dot"></i>小台</span></div><svg viewBox="0 0 360 178" class="mini-svg" role="img" aria-label="小台與微台散戶多空比趨勢">
+<line x1="42" y1="107.5" x2="348" y2="107.5" stroke="var(--muted)" stroke-width="1" opacity="0.45"/>
+<line x1="42" y1="79.2" x2="348" y2="79.2" stroke="var(--warn)" stroke-width="1" stroke-dasharray="4,3" opacity="0.75"/>
+<line x1="42" y1="135.8" x2="348" y2="135.8" stroke="var(--info)" stroke-width="1" stroke-dasharray="4,3" opacity="0.75"/>
+<text x="348" y="76.2" text-anchor="end" class="svg-tick" fill="var(--warn)">+20% 抄底警戒</text>
+<text x="348" y="145.8" text-anchor="end" class="svg-tick" fill="var(--info)">-20% 軋空警戒</text>
+<text x="37" y="30" text-anchor="end" class="svg-tick">+60%</text>
+<text x="37" y="110.5" text-anchor="end" class="svg-tick">0%</text>
+<text x="37" y="150" text-anchor="end" class="svg-tick">-30%</text>
+<path d="M72.6,86.6 L133.8,95.5 L195.0,84.4 L256.2,98.6 L317.4,110.1" fill="none" stroke="var(--info)" stroke-width="2.2" stroke-dasharray="4,3"/>
+<circle cx="72.6" cy="86.6" r="3.6" fill="var(--info)" stroke="var(--surface)" stroke-width="1.2"><title>11/16 小台散戶比: +14.77%</title></circle>
+<circle cx="133.8" cy="95.5" r="3.6" fill="var(--info)" stroke="var(--surface)" stroke-width="1.2"><title>11/17 小台散戶比: +8.52%</title></circle>
+<circle cx="195.0" cy="84.4" r="3.6" fill="var(--info)" stroke="var(--surface)" stroke-width="1.2"><title>11/18 小台散戶比: +16.37%</title></circle>
+<circle cx="256.2" cy="98.6" r="3.6" fill="var(--info)" stroke="var(--surface)" stroke-width="1.2"><title>11/19 小台散戶比: +6.29%</title></circle>
+<circle cx="317.4" cy="110.1" r="3.6" fill="var(--info)" stroke="var(--surface)" stroke-width="1.2"><title>11/20 小台散戶比: -1.79%</title></circle>
+<path d="M72.6,59.6 L133.8,55.7 L195.0,46.6 L256.2,29.1 L317.4,32.5" fill="none" stroke="var(--warn)" stroke-width="2.2"/>
+<circle cx="72.6" cy="59.6" r="3.6" fill="var(--warn)" stroke="var(--surface)" stroke-width="1.2"><title>11/16 微台散戶比: +33.87%</title></circle>
+<circle cx="133.8" cy="55.7" r="3.6" fill="var(--warn)" stroke="var(--surface)" stroke-width="1.2"><title>11/17 微台散戶比: +36.62%</title></circle>
+<circle cx="195.0" cy="46.6" r="3.6" fill="var(--warn)" stroke="var(--surface)" stroke-width="1.2"><title>11/18 微台散戶比: +43.00%</title></circle>
+<circle cx="256.2" cy="29.1" r="3.6" fill="var(--warn)" stroke="var(--surface)" stroke-width="1.2"><title>11/19 微台散戶比: +55.41%</title></circle>
+<circle cx="317.4" cy="32.5" r="3.6" fill="var(--warn)" stroke="var(--surface)" stroke-width="1.2"><title>11/20 微台散戶比: +52.99%</title></circle>
+<text x="72.6" y="170" text-anchor="middle" class="svg-tick">11/16</text>
+<text x="133.8" y="170" text-anchor="middle" class="svg-tick">11/17</text>
+<text x="195.0" y="170" text-anchor="middle" class="svg-tick">11/18</text>
+<text x="256.2" y="170" text-anchor="middle" class="svg-tick">11/19</text>
+<text x="317.4" y="170" text-anchor="middle" class="svg-tick">11/20</text>
+</svg></div><div class="mini-chart-card"><div class="mini-chart-hdr"><span>VIX (左) vs. P/C Ratio (右)</span><span class="legend-inline"><i class="dot call-dot"></i>VIX <i class="dot put-dot"></i>P/C</span></div><svg viewBox="0 0 360 178" class="mini-svg" role="img" aria-label="VIX 與 P/C Ratio 雙軸趨勢">
+<line x1="38" y1="86.0" x2="322" y2="86.0" stroke="var(--border)" stroke-width="1" stroke-dasharray="3,3"/>
+<text x="33" y="30" text-anchor="end" class="svg-tick" fill="var(--call)">55</text>
+<text x="33" y="150" text-anchor="end" class="svg-tick" fill="var(--call)">43</text>
+<text x="327" y="30" text-anchor="start" class="svg-tick" fill="var(--put)">62%</text>
+<text x="327" y="150" text-anchor="start" class="svg-tick" fill="var(--put)">22%</text>
+<text x="66.4" y="170" text-anchor="middle" class="svg-tick">11/16</text>
+<text x="123.2" y="170" text-anchor="middle" class="svg-tick">11/17</text>
+<text x="180.0" y="170" text-anchor="middle" class="svg-tick">11/18</text>
+<text x="236.8" y="170" text-anchor="middle" class="svg-tick">11/19</text>
+<text x="293.6" y="170" text-anchor="middle" class="svg-tick">11/20</text>
+<path d="M66.4,48.5 L123.2,47.6 L180.0,93.2 L236.8,89.4 L293.6,124.4" fill="none" stroke="var(--put)" stroke-width="2" stroke-dasharray="4,3"/>
+<circle cx="66.4" cy="48.5" r="3.4" fill="var(--put)" stroke="var(--surface)" stroke-width="1.2"><title>11/16 P/C Ratio (OI): 53.79%</title></circle>
+<circle cx="123.2" cy="47.6" r="3.4" fill="var(--put)" stroke="var(--surface)" stroke-width="1.2"><title>11/17 P/C Ratio (OI): 54.08%</title></circle>
+<circle cx="180.0" cy="93.2" r="3.4" fill="var(--put)" stroke="var(--surface)" stroke-width="1.2"><title>11/18 P/C Ratio (OI): 39.80%</title></circle>
+<circle cx="236.8" cy="89.4" r="3.4" fill="var(--put)" stroke="var(--surface)" stroke-width="1.2"><title>11/19 P/C Ratio (OI): 41.00%</title></circle>
+<circle cx="293.6" cy="124.4" r="3.4" fill="var(--put)" stroke="var(--surface)" stroke-width="1.2"><title>11/20 P/C Ratio (OI): 30.05%</title></circle>
+<path d="M66.4,89.2 L123.2,80.7 L180.0,118.9 L236.8,83.5 L293.6,53.1" fill="none" stroke="var(--call)" stroke-width="2.2"/>
+<circle cx="66.4" cy="89.2" r="3.6" fill="var(--call)" stroke="var(--surface)" stroke-width="1.2"><title>11/16 TAIWAN VIX: 48.72</title></circle>
+<circle cx="123.2" cy="80.7" r="3.6" fill="var(--call)" stroke="var(--surface)" stroke-width="1.2"><title>11/17 TAIWAN VIX: 49.54</title></circle>
+<circle cx="180.0" cy="118.9" r="3.6" fill="var(--call)" stroke="var(--surface)" stroke-width="1.2"><title>11/18 TAIWAN VIX: 45.86</title></circle>
+<circle cx="236.8" cy="83.5" r="3.6" fill="var(--call)" stroke="var(--surface)" stroke-width="1.2"><title>11/19 TAIWAN VIX: 49.27</title></circle>
+<circle cx="293.6" cy="53.1" r="3.6" fill="var(--call)" stroke="var(--surface)" stroke-width="1.2"><title>11/20 TAIWAN VIX: 52.20</title></circle>
+</svg></div></div><div class="table-wrap" style="margin-top:14px"><table class="data-table"><thead><tr><th>日期</th><th class="text-right">加權漲跌</th><th class="text-right">正逆價差</th><th class="text-right">外資現貨(億)</th><th class="text-right">自營自行/避險(億)</th><th class="text-right">外資期貨淨口數</th><th class="text-right">投信期貨增減</th><th class="text-right">小台散戶比</th><th class="text-right">微台散戶比</th><th class="text-right">P/C (OI)</th><th class="text-right">VIX</th></tr></thead><tbody><tr><td class="num"><strong>2026/11/16</strong></td><td class="num text-right down">-2,635.0</td><td class="num text-right down">-155.1</td><td class="num text-right down">-701.9</td><td class="num text-right"><span class="up">+31.2</span> / <span class="down">-290.2</span></td><td class="num text-right down">-96,787</td><td class="num text-right down">-7,517</td><td class="num text-right">+14.8%</td><td class="num text-right warn-text">+33.9%</td><td class="num text-right">53.8%</td><td class="num text-right">48.72</td></tr><tr><td class="num"><strong>2026/11/17</strong></td><td class="num text-right down">-948.0</td><td class="num text-right down">-19.1</td><td class="num text-right down">-380.9</td><td class="num text-right"><span class="up">+63.9</span> / <span class="down">-220.8</span></td><td class="num text-right down">-97,896</td><td class="num text-right down">-1,180</td><td class="num text-right">+8.5%</td><td class="num text-right warn-text">+36.6%</td><td class="num text-right">54.1%</td><td class="num text-right">49.54</td></tr><tr><td class="num"><strong>2026/11/18</strong></td><td class="num text-right up">+102.8</td><td class="num text-right down">-169.9</td><td class="num text-right down">-765.6</td><td class="num text-right"><span class="up">+54.7</span> / <span class="down">-96.7</span></td><td class="num text-right down">-99,438</td><td class="num text-right up">+2,347</td><td class="num text-right">+16.4%</td><td class="num text-right warn-text">+43.0%</td><td class="num text-right">39.8%</td><td class="num text-right">45.86</td></tr><tr><td class="num"><strong>2026/11/19</strong></td><td class="num text-right down">-1,768.0</td><td class="num text-right up">+222.1</td><td class="num text-right down">-243.1</td><td class="num text-right"><span class="down">-18.6</span> / <span class="down">-214.4</span></td><td class="num text-right down">-99,219</td><td class="num text-right down">-1,782</td><td class="num text-right">+6.3%</td><td class="num text-right warn-text">+55.4%</td><td class="num text-right">41.0%</td><td class="num text-right">49.27</td></tr><tr><td class="num"><strong>2026/11/20</strong></td><td class="num text-right down">-2,393.6</td><td class="num text-right down">-158.3</td><td class="num text-right down">-94.1</td><td class="num text-right"><span class="down">-50.7</span> / <span class="down">-290.2</span></td><td class="num text-right down">-97,863</td><td class="num text-right down">-4,192</td><td class="num text-right">-1.8%</td><td class="num text-right warn-text">+53.0%</td><td class="num text-right">30.1%</td><td class="num text-right">52.20</td></tr></tbody></table></div>
+  </section>
+
+  <footer class="card disclaimer-footer" aria-label="免責聲明">
+    <div class="disclaimer-title">⚠️ 免責聲明（Disclaimer）</div>
+    <p>1. 本站與本系統自動產製之所有臺指選擇權（TXO）、臺指期（TXF）及現貨三大法人（T86）盤後數據統計、族群歸類與操作意圖解讀，<strong>僅供個人程式化籌碼分析與研究參考，不構成任何形式之投資建議、買賣邀約或獲利保證</strong>。</p>
+    <p>2. 原始數據取自臺灣證券交易所（TWSE）與臺灣期貨交易所（TAIFEX）公開盤後資訊，經自動化程式擷取、清理與統計產出；若因盤後修訂、傳輸延遲或分類口徑限制產生差異，<strong>一切資料請以各交易所官方公告為準</strong>。</p>
+    <p>3. 股市、期貨與選擇權具備高槓桿與高度波動風險，<strong>任何交易決策請審慎評估自身風險承受能力，並由投資人自行負擔相關交易風險與盈虧責任</strong>。</p>
+  </footer>
+
+</div>
+
+<div id="oiTooltip" class="oi-tooltip"></div>
+
+<script id="txo-data" type="application/json">{"ref_spot": 36033.29, "taiex_is_est": false, "txf_close": 35875.0, "layers": [{"key": "weekly", "label": "短線週選 (202611W4)", "expiry_code": "202611W4", "contract_type": "週三選", "expiry_date": "20261125", "days_left": 5, "call_oi_sum": 43557, "put_oi_sum": 5731, "call_top3": [[43000, 5302, 5061], [38700, 2045, 44], [47000, 2039, -2]], "put_top3": [[34500, 609, 609], [36000, 401, -125], [35000, 238, 238]], "near_atm_calls": [[38000, 676, 676], [37000, 244, 244], [37500, 140, 140]], "near_atm_puts": [[34500, 609, 609], [36000, 401, -125], [35000, 238, 238]], "deep_itm_call": null, "deep_itm_put": [39500, 638], "call_max_add": [43000, 5302, 5061], "call_max_cut": [42050, 19, -36], "put_max_add": [34500, 609, 609], "put_max_cut": [36000, 401, -125], "max_pain": 35200.0, "strike_series": [{"strike": 34500, "call_oi": 28, "call_chg": 28, "put_oi": 609, "put_chg": 609}, {"strike": 34600, "call_oi": 8, "call_chg": 8, "put_oi": 74, "put_chg": 74}, {"strike": 34700, "call_oi": 7, "call_chg": 7, "put_oi": 112, "put_chg": 112}, {"strike": 34800, "call_oi": 26, "call_chg": 26, "put_oi": 43, "put_chg": 43}, {"strike": 34900, "call_oi": 1951, "call_chg": 1951, "put_oi": 58, "put_chg": 58}, {"strike": 35000, "call_oi": 2002, "call_chg": 2002, "put_oi": 238, "put_chg": 238}, {"strike": 35100, "call_oi": 58, "call_chg": 58, "put_oi": 18, "put_chg": 18}, {"strike": 35200, "call_oi": 2000, "call_chg": 2000, "put_oi": 29, "put_chg": 29}, {"strike": 35300, "call_oi": 2500, "call_chg": 2500, "put_oi": 28, "put_chg": 28}, {"strike": 35400, "call_oi": 26, "call_chg": 26, "put_oi": 23, "put_chg": 23}, {"strike": 35500, "call_oi": 81, "call_chg": 81, "put_oi": 67, "put_chg": 67}, {"strike": 35600, "call_oi": 118, "call_chg": 118, "put_oi": 42, "put_chg": 42}, {"strike": 35700, "call_oi": 3026, "call_chg": 3026, "put_oi": 54, "put_chg": 54}, {"strike": 35800, "call_oi": 2528, "call_chg": 2528, "put_oi": 169, "put_chg": 169}, {"strike": 35900, "call_oi": 76, "call_chg": 76, "put_oi": 31, "put_chg": 31}, {"strike": 36000, "call_oi": 193, "call_chg": 193, "put_oi": 401, "put_chg": -125}, {"strike": 36100, "call_oi": 10, "call_chg": 10, "put_oi": 80, "put_chg": 38}, {"strike": 36200, "call_oi": 37, "call_chg": 37, "put_oi": 57, "put_chg": 26}, {"strike": 36300, "call_oi": 69, "call_chg": 69, "put_oi": 34, "put_chg": 17}, {"strike": 36400, "call_oi": 19, "call_chg": 19, "put_oi": 50, "put_chg": 3}, {"strike": 36500, "call_oi": 55, "call_chg": 55, "put_oi": 197, "put_chg": -64}, {"strike": 36600, "call_oi": 16, "call_chg": 16, "put_oi": 30, "put_chg": 18}, {"strike": 36700, "call_oi": 31, "call_chg": 31, "put_oi": 24, "put_chg": 18}, {"strike": 36800, "call_oi": 33, "call_chg": 33, "put_oi": 19, "put_chg": 16}, {"strike": 36900, "call_oi": 21, "call_chg": 21, "put_oi": 55, "put_chg": 19}, {"strike": 37000, "call_oi": 244, "call_chg": 244, "put_oi": 113, "put_chg": 29}, {"strike": 37100, "call_oi": 72, "call_chg": 72, "put_oi": 48, "put_chg": 39}, {"strike": 37200, "call_oi": 43, "call_chg": 43, "put_oi": 165, "put_chg": 159}, {"strike": 37300, "call_oi": 64, "call_chg": 64, "put_oi": 53, "put_chg": 20}, {"strike": 37350, "call_oi": 17, "call_chg": 17, "put_oi": 10, "put_chg": 10}, {"strike": 37400, "call_oi": 50, "call_chg": 50, "put_oi": 20, "put_chg": 7}, {"strike": 37450, "call_oi": 6, "call_chg": 6, "put_oi": 5, "put_chg": 5}, {"strike": 37500, "call_oi": 140, "call_chg": 140, "put_oi": 46, "put_chg": 20}, {"strike": 37550, "call_oi": 24, "call_chg": 24, "put_oi": 0, "put_chg": 0}, {"strike": 37600, "call_oi": 35, "call_chg": 35, "put_oi": 21, "put_chg": 3}, {"strike": 37650, "call_oi": 10, "call_chg": 10, "put_oi": 1, "put_chg": 1}, {"strike": 37700, "call_oi": 44, "call_chg": 44, "put_oi": 13, "put_chg": 4}, {"strike": 37750, "call_oi": 16, "call_chg": 16, "put_oi": 8, "put_chg": 8}, {"strike": 37800, "call_oi": 45, "call_chg": 45, "put_oi": 620, "put_chg": 5}, {"strike": 37850, "call_oi": 23, "call_chg": 23, "put_oi": 7, "put_chg": 7}, {"strike": 37900, "call_oi": 83, "call_chg": 83, "put_oi": 26, "put_chg": 9}, {"strike": 37950, "call_oi": 33, "call_chg": 33, "put_oi": 0, "put_chg": 0}, {"strike": 38000, "call_oi": 676, "call_chg": 676, "put_oi": 86, "put_chg": 14}, {"strike": 38050, "call_oi": 22, "call_chg": 22, "put_oi": 11, "put_chg": 11}, {"strike": 38100, "call_oi": 66, "call_chg": 66, "put_oi": 17, "put_chg": 9}, {"strike": 38150, "call_oi": 28, "call_chg": 28, "put_oi": 0, "put_chg": 0}, {"strike": 38200, "call_oi": 44, "call_chg": 43, "put_oi": 20, "put_chg": -17}, {"strike": 38250, "call_oi": 25, "call_chg": 25, "put_oi": 1, "put_chg": 1}, {"strike": 38300, "call_oi": 52, "call_chg": 51, "put_oi": 28, "put_chg": 23}, {"strike": 38350, "call_oi": 17, "call_chg": 17, "put_oi": 0, "put_chg": 0}, {"strike": 38400, "call_oi": 131, "call_chg": 128, "put_oi": 101, "put_chg": 16}, {"strike": 38450, "call_oi": 47, "call_chg": 47, "put_oi": 0, "put_chg": 0}, {"strike": 38500, "call_oi": 240, "call_chg": 178, "put_oi": 48, "put_chg": 0}, {"strike": 38550, "call_oi": 29, "call_chg": 29, "put_oi": 0, "put_chg": 0}, {"strike": 38600, "call_oi": 40, "call_chg": 27, "put_oi": 33, "put_chg": 9}, {"strike": 38650, "call_oi": 17, "call_chg": 17, "put_oi": 4, "put_chg": 4}, {"strike": 38700, "call_oi": 2045, "call_chg": 44, "put_oi": 86, "put_chg": 15}, {"strike": 38750, "call_oi": 20, "call_chg": 20, "put_oi": 0, "put_chg": 0}, {"strike": 38800, "call_oi": 131, "call_chg": 86, "put_oi": 24, "put_chg": -1}, {"strike": 38850, "call_oi": 21, "call_chg": 21, "put_oi": 0, "put_chg": 0}, {"strike": 38900, "call_oi": 2014, "call_chg": 12, "put_oi": 72, "put_chg": 7}, {"strike": 38950, "call_oi": 21, "call_chg": 12, "put_oi": 7, "put_chg": 3}, {"strike": 39000, "call_oi": 453, "call_chg": 374, "put_oi": 64, "put_chg": -66}, {"strike": 39050, "call_oi": 26, "call_chg": 10, "put_oi": 6, "put_chg": 3}, {"strike": 39100, "call_oi": 2005, "call_chg": 4, "put_oi": 125, "put_chg": 6}, {"strike": 39150, "call_oi": 18, "call_chg": 10, "put_oi": 5, "put_chg": 5}, {"strike": 39200, "call_oi": 31, "call_chg": 23, "put_oi": 32, "put_chg": 5}, {"strike": 39250, "call_oi": 24, "call_chg": 17, "put_oi": 6, "put_chg": 4}, {"strike": 39300, "call_oi": 54, "call_chg": 38, "put_oi": 9, "put_chg": 3}, {"strike": 39350, "call_oi": 64, "call_chg": 55, "put_oi": 5, "put_chg": 5}, {"strike": 39400, "call_oi": 75, "call_chg": 41, "put_oi": 15, "put_chg": 1}, {"strike": 39450, "call_oi": 138, "call_chg": 136, "put_oi": 10, "put_chg": 7}, {"strike": 39500, "call_oi": 102, "call_chg": 71, "put_oi": 638, "put_chg": -4}, {"strike": 39550, "call_oi": 13, "call_chg": 9, "put_oi": 6, "put_chg": 3}, {"strike": 39600, "call_oi": 31, "call_chg": 11, "put_oi": 22, "put_chg": 0}, {"strike": 39650, "call_oi": 18, "call_chg": 10, "put_oi": 9, "put_chg": 0}, {"strike": 39700, "call_oi": 33, "call_chg": 22, "put_oi": 9, "put_chg": -20}, {"strike": 39750, "call_oi": 16, "call_chg": 8, "put_oi": 6, "put_chg": 0}, {"strike": 39800, "call_oi": 68, "call_chg": 43, "put_oi": 13, "put_chg": -1}, {"strike": 39850, "call_oi": 16, "call_chg": 9, "put_oi": 5, "put_chg": 0}, {"strike": 39900, "call_oi": 45, "call_chg": 14, "put_oi": 4, "put_chg": -3}, {"strike": 39950, "call_oi": 34, "call_chg": 20, "put_oi": 10, "put_chg": 0}, {"strike": 40000, "call_oi": 1552, "call_chg": 1148, "put_oi": 26, "put_chg": -2}, {"strike": 40050, "call_oi": 33, "call_chg": 20, "put_oi": 10, "put_chg": 0}, {"strike": 40100, "call_oi": 125, "call_chg": 87, "put_oi": 7, "put_chg": 0}, {"strike": 40150, "call_oi": 22, "call_chg": 9, "put_oi": 6, "put_chg": 0}, {"strike": 40200, "call_oi": 189, "call_chg": 141, "put_oi": 19, "put_chg": 0}, {"strike": 40250, "call_oi": 30, "call_chg": 21, "put_oi": 7, "put_chg": 0}, {"strike": 40300, "call_oi": 41, "call_chg": 12, "put_oi": 3, "put_chg": -1}, {"strike": 40350, "call_oi": 19, "call_chg": 8, "put_oi": 3, "put_chg": 0}, {"strike": 40400, "call_oi": 37, "call_chg": 16, "put_oi": 6, "put_chg": 0}, {"strike": 40450, "call_oi": 13, "call_chg": 3, "put_oi": 2, "put_chg": 0}, {"strike": 40500, "call_oi": 194, "call_chg": 72, "put_oi": 25, "put_chg": -6}, {"strike": 40550, "call_oi": 13, "call_chg": 12, "put_oi": 0, "put_chg": 0}, {"strike": 40600, "call_oi": 69, "call_chg": 20, "put_oi": 11, "put_chg": 2}, {"strike": 40650, "call_oi": 15, "call_chg": 9, "put_oi": 2, "put_chg": -2}, {"strike": 40700, "call_oi": 51, "call_chg": 37, "put_oi": 8, "put_chg": 0}, {"strike": 40750, "call_oi": 27, "call_chg": 17, "put_oi": 15, "put_chg": 0}, {"strike": 40800, "call_oi": 89, "call_chg": 37, "put_oi": 51, "put_chg": 0}, {"strike": 40850, "call_oi": 17, "call_chg": -1, "put_oi": 25, "put_chg": 0}, {"strike": 40900, "call_oi": 42, "call_chg": 19, "put_oi": 33, "put_chg": 0}, {"strike": 40950, "call_oi": 3, "call_chg": 0, "put_oi": 1, "put_chg": 0}, {"strike": 41000, "call_oi": 686, "call_chg": 549, "put_oi": 14, "put_chg": -6}, {"strike": 41050, "call_oi": 7, "call_chg": 4, "put_oi": 1, "put_chg": 0}, {"strike": 41100, "call_oi": 19, "call_chg": 7, "put_oi": 4, "put_chg": 0}, {"strike": 41150, "call_oi": 12, "call_chg": 1, "put_oi": 7, "put_chg": 0}, {"strike": 41200, "call_oi": 57, "call_chg": 31, "put_oi": 6, "put_chg": 1}, {"strike": 41250, "call_oi": 40, "call_chg": 30, "put_oi": 0, "put_chg": 0}, {"strike": 41300, "call_oi": 21, "call_chg": 8, "put_oi": 2, "put_chg": 0}, {"strike": 41350, "call_oi": 5, "call_chg": 2, "put_oi": 0, "put_chg": 0}, {"strike": 41400, "call_oi": 26, "call_chg": 17, "put_oi": 2, "put_chg": 0}, {"strike": 41450, "call_oi": 46, "call_chg": 40, "put_oi": 5, "put_chg": 0}, {"strike": 41500, "call_oi": 318, "call_chg": 244, "put_oi": 3, "put_chg": -4}, {"strike": 41550, "call_oi": 16, "call_chg": 15, "put_oi": 2, "put_chg": 0}, {"strike": 41600, "call_oi": 62, "call_chg": 31, "put_oi": 1, "put_chg": 0}, {"strike": 41650, "call_oi": 5, "call_chg": 3, "put_oi": 2, "put_chg": 0}, {"strike": 41700, "call_oi": 33, "call_chg": 19, "put_oi": 4, "put_chg": 0}, {"strike": 41750, "call_oi": 18, "call_chg": 12, "put_oi": 3, "put_chg": 0}, {"strike": 41800, "call_oi": 52, "call_chg": 35, "put_oi": 1, "put_chg": 0}, {"strike": 41850, "call_oi": 24, "call_chg": 12, "put_oi": 1, "put_chg": 0}, {"strike": 41900, "call_oi": 37, "call_chg": 19, "put_oi": 4, "put_chg": 0}, {"strike": 41950, "call_oi": 9, "call_chg": -1, "put_oi": 1, "put_chg": 0}, {"strike": 42000, "call_oi": 615, "call_chg": 346, "put_oi": 9, "put_chg": 0}, {"strike": 42050, "call_oi": 19, "call_chg": -36, "put_oi": 2, "put_chg": 0}, {"strike": 42100, "call_oi": 139, "call_chg": 109, "put_oi": 3, "put_chg": 0}, {"strike": 42150, "call_oi": 12, "call_chg": 0, "put_oi": 5, "put_chg": 0}, {"strike": 42200, "call_oi": 56, "call_chg": 5, "put_oi": 4, "put_chg": 0}, {"strike": 42250, "call_oi": 41, "call_chg": 4, "put_oi": 4, "put_chg": -1}, {"strike": 42300, "call_oi": 73, "call_chg": 39, "put_oi": 1, "put_chg": 0}, {"strike": 42350, "call_oi": 48, "call_chg": 6, "put_oi": 0, "put_chg": 0}, {"strike": 42400, "call_oi": 54, "call_chg": 0, "put_oi": 1, "put_chg": 0}, {"strike": 42450, "call_oi": 24, "call_chg": 18, "put_oi": 0, "put_chg": 0}, {"strike": 42500, "call_oi": 245, "call_chg": 188, "put_oi": 5, "put_chg": 0}, {"strike": 42550, "call_oi": 32, "call_chg": 14, "put_oi": 9, "put_chg": 0}, {"strike": 42600, "call_oi": 74, "call_chg": 50, "put_oi": 3, "put_chg": 0}, {"strike": 42650, "call_oi": 15, "call_chg": 3, "put_oi": 4, "put_chg": 0}, {"strike": 42700, "call_oi": 40, "call_chg": 10, "put_oi": 4, "put_chg": 0}, {"strike": 42750, "call_oi": 17, "call_chg": 13, "put_oi": 1, "put_chg": 0}, {"strike": 42800, "call_oi": 59, "call_chg": 26, "put_oi": 5, "put_chg": 0}, {"strike": 42850, "call_oi": 22, "call_chg": 13, "put_oi": 3, "put_chg": 0}, {"strike": 42900, "call_oi": 29, "call_chg": 21, "put_oi": 2, "put_chg": 0}, {"strike": 42950, "call_oi": 63, "call_chg": 53, "put_oi": 1, "put_chg": 0}, {"strike": 43000, "call_oi": 5302, "call_chg": 5061, "put_oi": 5, "put_chg": 0}, {"strike": 43050, "call_oi": 19, "call_chg": 3, "put_oi": 6, "put_chg": 0}, {"strike": 43100, "call_oi": 50, "call_chg": 34, "put_oi": 1, "put_chg": 0}, {"strike": 43150, "call_oi": 14, "call_chg": -2, "put_oi": 2, "put_chg": 0}, {"strike": 43200, "call_oi": 166, "call_chg": 136, "put_oi": 2, "put_chg": 0}, {"strike": 43250, "call_oi": 30, "call_chg": 4, "put_oi": 2, "put_chg": 0}, {"strike": 43300, "call_oi": 46, "call_chg": 11, "put_oi": 0, "put_chg": 0}, {"strike": 43350, "call_oi": 29, "call_chg": 1, "put_oi": 0, "put_chg": 0}, {"strike": 43400, "call_oi": 25, "call_chg": 2, "put_oi": 1, "put_chg": 0}, {"strike": 43450, "call_oi": 38, "call_chg": 13, "put_oi": 0, "put_chg": 0}, {"strike": 43500, "call_oi": 171, "call_chg": 91, "put_oi": 10, "put_chg": 0}, {"strike": 43550, "call_oi": 40, "call_chg": 1, "put_oi": 0, "put_chg": 0}, {"strike": 43600, "call_oi": 49, "call_chg": 9, "put_oi": 2, "put_chg": 0}, {"strike": 43650, "call_oi": 36, "call_chg": 1, "put_oi": 0, "put_chg": 0}, {"strike": 43700, "call_oi": 81, "call_chg": 38, "put_oi": 3, "put_chg": 0}, {"strike": 43750, "call_oi": 49, "call_chg": 1, "put_oi": 0, "put_chg": 0}, {"strike": 43800, "call_oi": 43, "call_chg": -1, "put_oi": 2, "put_chg": 0}, {"strike": 43850, "call_oi": 39, "call_chg": -1, "put_oi": 5, "put_chg": 0}, {"strike": 43900, "call_oi": 29, "call_chg": 1, "put_oi": 3, "put_chg": 0}, {"strike": 43950, "call_oi": 22, "call_chg": 2, "put_oi": 0, "put_chg": 0}, {"strike": 44000, "call_oi": 630, "call_chg": 220, "put_oi": 33, "put_chg": 0}, {"strike": 44050, "call_oi": 1, "call_chg": 0, "put_oi": 2, "put_chg": 0}, {"strike": 44100, "call_oi": 19, "call_chg": -3, "put_oi": 0, "put_chg": 0}, {"strike": 44150, "call_oi": 9, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 44200, "call_oi": 37, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 44250, "call_oi": 6, "call_chg": 0, "put_oi": 7, "put_chg": 0}, {"strike": 44300, "call_oi": 37, "call_chg": 0, "put_oi": 5, "put_chg": 0}, {"strike": 44350, "call_oi": 18, "call_chg": 4, "put_oi": 0, "put_chg": 0}, {"strike": 44400, "call_oi": 30, "call_chg": 2, "put_oi": 1, "put_chg": 0}, {"strike": 44450, "call_oi": 18, "call_chg": 3, "put_oi": 3, "put_chg": 0}, {"strike": 44500, "call_oi": 114, "call_chg": 3, "put_oi": 0, "put_chg": 0}, {"strike": 44550, "call_oi": 6, "call_chg": 4, "put_oi": 0, "put_chg": 0}, {"strike": 44600, "call_oi": 11, "call_chg": 1, "put_oi": 3, "put_chg": 0}, {"strike": 44650, "call_oi": 1, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 44700, "call_oi": 10, "call_chg": -1, "put_oi": 0, "put_chg": 0}, {"strike": 44750, "call_oi": 5, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 44800, "call_oi": 17, "call_chg": 7, "put_oi": 0, "put_chg": 0}, {"strike": 44850, "call_oi": 7, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 44900, "call_oi": 7, "call_chg": -2, "put_oi": 0, "put_chg": 0}, {"strike": 44950, "call_oi": 8, "call_chg": 1, "put_oi": 0, "put_chg": 0}, {"strike": 45000, "call_oi": 882, "call_chg": 5, "put_oi": 0, "put_chg": 0}, {"strike": 45050, "call_oi": 16, "call_chg": 0, "put_oi": 1, "put_chg": 0}, {"strike": 45100, "call_oi": 18, "call_chg": -2, "put_oi": 0, "put_chg": 0}, {"strike": 45150, "call_oi": 15, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 45200, "call_oi": 21, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 45250, "call_oi": 6, "call_chg": 0, "put_oi": 5, "put_chg": 0}, {"strike": 45300, "call_oi": 9, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 45350, "call_oi": 4, "call_chg": -3, "put_oi": 0, "put_chg": 0}, {"strike": 45400, "call_oi": 9, "call_chg": -1, "put_oi": 0, "put_chg": 0}, {"strike": 45450, "call_oi": 11, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 45500, "call_oi": 664, "call_chg": -1, "put_oi": 0, "put_chg": 0}, {"strike": 45550, "call_oi": 38, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 45600, "call_oi": 21, "call_chg": -3, "put_oi": 0, "put_chg": 0}, {"strike": 45700, "call_oi": 30, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 45800, "call_oi": 5, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 45900, "call_oi": 10, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 46000, "call_oi": 1438, "call_chg": -1, "put_oi": 0, "put_chg": 0}, {"strike": 46100, "call_oi": 7, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 46200, "call_oi": 29, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 46300, "call_oi": 15, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 46400, "call_oi": 3, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 46500, "call_oi": 97, "call_chg": 21, "put_oi": 0, "put_chg": 0}, {"strike": 46600, "call_oi": 19, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 46700, "call_oi": 10, "call_chg": -3, "put_oi": 0, "put_chg": 0}, {"strike": 46800, "call_oi": 16, "call_chg": -2, "put_oi": 0, "put_chg": 0}, {"strike": 46900, "call_oi": 4, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 47000, "call_oi": 2039, "call_chg": -2, "put_oi": 1, "put_chg": 0}, {"strike": 47100, "call_oi": 6, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 47200, "call_oi": 5, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 47300, "call_oi": 3, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 47400, "call_oi": 3, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 47500, "call_oi": 2, "call_chg": -1, "put_oi": 0, "put_chg": 0}, {"strike": 47600, "call_oi": 1, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 47700, "call_oi": 9, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 47800, "call_oi": 77, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 47900, "call_oi": 10, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 48000, "call_oi": 64, "call_chg": 3, "put_oi": 0, "put_chg": 0}, {"strike": 48100, "call_oi": 1, "call_chg": -5, "put_oi": 0, "put_chg": 0}, {"strike": 48200, "call_oi": 5, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 48300, "call_oi": 5, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 48400, "call_oi": 5, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 48500, "call_oi": 8, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 48600, "call_oi": 4, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 48700, "call_oi": 75, "call_chg": -1, "put_oi": 2, "put_chg": 2}]}, {"key": "monthly", "label": "波段月選 (202612)", "expiry_code": "202612", "contract_type": "月選", "expiry_date": "20261216", "days_left": 26, "call_oi_sum": 25288, "put_oi_sum": 18051, "call_top3": [[50000, 1833, 10], [52000, 1193, -18], [40000, 1156, 490]], "put_top3": [[25200, 1584, 113], [30000, 850, 6], [28000, 783, 166]], "near_atm_calls": [[38000, 90, 66], [37000, 48, 43], [36500, 30, 30]], "near_atm_puts": [[35000, 714, 240], [36000, 260, -1], [34500, 97, -5]], "deep_itm_call": null, "deep_itm_put": [49800, 3399], "call_max_add": [40000, 1156, 490], "call_max_cut": [47000, 505, -194], "put_max_add": [35000, 714, 240], "put_max_cut": [37000, 299, -49], "max_pain": 42300.0, "strike_series": [{"strike": 25200, "call_oi": 0, "call_chg": 0, "put_oi": 1584, "put_chg": 113}, {"strike": 25400, "call_oi": 0, "call_chg": 0, "put_oi": 91, "put_chg": 13}, {"strike": 25600, "call_oi": 0, "call_chg": 0, "put_oi": 35, "put_chg": 0}, {"strike": 25800, "call_oi": 0, "call_chg": 0, "put_oi": 22, "put_chg": -2}, {"strike": 26000, "call_oi": 1, "call_chg": 0, "put_oi": 140, "put_chg": -10}, {"strike": 26200, "call_oi": 0, "call_chg": 0, "put_oi": 12, "put_chg": 0}, {"strike": 26400, "call_oi": 0, "call_chg": 0, "put_oi": 16, "put_chg": 3}, {"strike": 26600, "call_oi": 0, "call_chg": 0, "put_oi": 25, "put_chg": 21}, {"strike": 26800, "call_oi": 117, "call_chg": -1, "put_oi": 59, "put_chg": 1}, {"strike": 27000, "call_oi": 0, "call_chg": 0, "put_oi": 63, "put_chg": 7}, {"strike": 27200, "call_oi": 0, "call_chg": 0, "put_oi": 14, "put_chg": 4}, {"strike": 27400, "call_oi": 0, "call_chg": 0, "put_oi": 16, "put_chg": 2}, {"strike": 27600, "call_oi": 0, "call_chg": 0, "put_oi": 32, "put_chg": 6}, {"strike": 27800, "call_oi": 0, "call_chg": 0, "put_oi": 225, "put_chg": 2}, {"strike": 28000, "call_oi": 0, "call_chg": 0, "put_oi": 783, "put_chg": 166}, {"strike": 28200, "call_oi": 0, "call_chg": 0, "put_oi": 225, "put_chg": 2}, {"strike": 28400, "call_oi": 0, "call_chg": 0, "put_oi": 213, "put_chg": 0}, {"strike": 28600, "call_oi": 0, "call_chg": 0, "put_oi": 16, "put_chg": 11}, {"strike": 28800, "call_oi": 0, "call_chg": 0, "put_oi": 33, "put_chg": 1}, {"strike": 29000, "call_oi": 0, "call_chg": 0, "put_oi": 72, "put_chg": 20}, {"strike": 29200, "call_oi": 0, "call_chg": 0, "put_oi": 12, "put_chg": -2}, {"strike": 29400, "call_oi": 0, "call_chg": 0, "put_oi": 14, "put_chg": 7}, {"strike": 29600, "call_oi": 0, "call_chg": 0, "put_oi": 9, "put_chg": 3}, {"strike": 29800, "call_oi": 0, "call_chg": 0, "put_oi": 32, "put_chg": -4}, {"strike": 30000, "call_oi": 0, "call_chg": 0, "put_oi": 850, "put_chg": 6}, {"strike": 30200, "call_oi": 0, "call_chg": 0, "put_oi": 32, "put_chg": 16}, {"strike": 30400, "call_oi": 0, "call_chg": 0, "put_oi": 7, "put_chg": -1}, {"strike": 30600, "call_oi": 0, "call_chg": 0, "put_oi": 9, "put_chg": -2}, {"strike": 30800, "call_oi": 1, "call_chg": 0, "put_oi": 16, "put_chg": 4}, {"strike": 31000, "call_oi": 0, "call_chg": 0, "put_oi": 159, "put_chg": 80}, {"strike": 31200, "call_oi": 0, "call_chg": 0, "put_oi": 25, "put_chg": -1}, {"strike": 31400, "call_oi": 0, "call_chg": 0, "put_oi": 8, "put_chg": 3}, {"strike": 31600, "call_oi": 0, "call_chg": 0, "put_oi": 28, "put_chg": -4}, {"strike": 31800, "call_oi": 0, "call_chg": 0, "put_oi": 129, "put_chg": -9}, {"strike": 32000, "call_oi": 1, "call_chg": 1, "put_oi": 256, "put_chg": 50}, {"strike": 32200, "call_oi": 1, "call_chg": 1, "put_oi": 25, "put_chg": 15}, {"strike": 32400, "call_oi": 0, "call_chg": 0, "put_oi": 43, "put_chg": 12}, {"strike": 32600, "call_oi": 0, "call_chg": 0, "put_oi": 17, "put_chg": 4}, {"strike": 32700, "call_oi": 0, "call_chg": 0, "put_oi": 51, "put_chg": 51}, {"strike": 32800, "call_oi": 0, "call_chg": 0, "put_oi": 14, "put_chg": 4}, {"strike": 33000, "call_oi": 0, "call_chg": 0, "put_oi": 244, "put_chg": 62}, {"strike": 33200, "call_oi": 1, "call_chg": 1, "put_oi": 12, "put_chg": 1}, {"strike": 33400, "call_oi": 1, "call_chg": 1, "put_oi": 82, "put_chg": 3}, {"strike": 33500, "call_oi": 2, "call_chg": 2, "put_oi": 35, "put_chg": 35}, {"strike": 33600, "call_oi": 0, "call_chg": 0, "put_oi": 17, "put_chg": 0}, {"strike": 33700, "call_oi": 0, "call_chg": 0, "put_oi": 9, "put_chg": 1}, {"strike": 33800, "call_oi": 0, "call_chg": 0, "put_oi": 27, "put_chg": 14}, {"strike": 33900, "call_oi": 0, "call_chg": 0, "put_oi": 12, "put_chg": -1}, {"strike": 34000, "call_oi": 1, "call_chg": 1, "put_oi": 324, "put_chg": 146}, {"strike": 34100, "call_oi": 0, "call_chg": 0, "put_oi": 24, "put_chg": 4}, {"strike": 34200, "call_oi": 0, "call_chg": 0, "put_oi": 19, "put_chg": 0}, {"strike": 34300, "call_oi": 0, "call_chg": 0, "put_oi": 19, "put_chg": 7}, {"strike": 34400, "call_oi": 0, "call_chg": 0, "put_oi": 65, "put_chg": 0}, {"strike": 34500, "call_oi": 1, "call_chg": 1, "put_oi": 97, "put_chg": -5}, {"strike": 34600, "call_oi": 0, "call_chg": 0, "put_oi": 13, "put_chg": -3}, {"strike": 34700, "call_oi": 0, "call_chg": 0, "put_oi": 19, "put_chg": 5}, {"strike": 34800, "call_oi": 0, "call_chg": 0, "put_oi": 18, "put_chg": 3}, {"strike": 34900, "call_oi": 2, "call_chg": 2, "put_oi": 13, "put_chg": 0}, {"strike": 35000, "call_oi": 22, "call_chg": 21, "put_oi": 714, "put_chg": 240}, {"strike": 35100, "call_oi": 0, "call_chg": 0, "put_oi": 10, "put_chg": -1}, {"strike": 35200, "call_oi": 0, "call_chg": 0, "put_oi": 32, "put_chg": 2}, {"strike": 35300, "call_oi": 1, "call_chg": 1, "put_oi": 4, "put_chg": 0}, {"strike": 35400, "call_oi": 1, "call_chg": 1, "put_oi": 27, "put_chg": 0}, {"strike": 35500, "call_oi": 0, "call_chg": 0, "put_oi": 77, "put_chg": -13}, {"strike": 35600, "call_oi": 0, "call_chg": 0, "put_oi": 21, "put_chg": 1}, {"strike": 35700, "call_oi": 11, "call_chg": 11, "put_oi": 8, "put_chg": 2}, {"strike": 35800, "call_oi": 18, "call_chg": 17, "put_oi": 42, "put_chg": 30}, {"strike": 35900, "call_oi": 0, "call_chg": 0, "put_oi": 83, "put_chg": 80}, {"strike": 36000, "call_oi": 24, "call_chg": 24, "put_oi": 260, "put_chg": -1}, {"strike": 36100, "call_oi": 4, "call_chg": 4, "put_oi": 18, "put_chg": 13}, {"strike": 36200, "call_oi": 10, "call_chg": 10, "put_oi": 25, "put_chg": 17}, {"strike": 36300, "call_oi": 16, "call_chg": 16, "put_oi": 14, "put_chg": 2}, {"strike": 36400, "call_oi": 1, "call_chg": 1, "put_oi": 35, "put_chg": 10}, {"strike": 36500, "call_oi": 30, "call_chg": 30, "put_oi": 41, "put_chg": 13}, {"strike": 36600, "call_oi": 6, "call_chg": 6, "put_oi": 29, "put_chg": 11}, {"strike": 36700, "call_oi": 3, "call_chg": 3, "put_oi": 94, "put_chg": 2}, {"strike": 36800, "call_oi": 12, "call_chg": 12, "put_oi": 56, "put_chg": 8}, {"strike": 36900, "call_oi": 3, "call_chg": 3, "put_oi": 10, "put_chg": -12}, {"strike": 37000, "call_oi": 48, "call_chg": 43, "put_oi": 299, "put_chg": -49}, {"strike": 37100, "call_oi": 13, "call_chg": 12, "put_oi": 21, "put_chg": -5}, {"strike": 37200, "call_oi": 5, "call_chg": 5, "put_oi": 23, "put_chg": -1}, {"strike": 37300, "call_oi": 3, "call_chg": 3, "put_oi": 31, "put_chg": 0}, {"strike": 37400, "call_oi": 9, "call_chg": 9, "put_oi": 45, "put_chg": 9}, {"strike": 37500, "call_oi": 7, "call_chg": 2, "put_oi": 81, "put_chg": -28}, {"strike": 37600, "call_oi": 6, "call_chg": 5, "put_oi": 223, "put_chg": 4}, {"strike": 37700, "call_oi": 23, "call_chg": 23, "put_oi": 30, "put_chg": 0}, {"strike": 37800, "call_oi": 15, "call_chg": 14, "put_oi": 46, "put_chg": -6}, {"strike": 37900, "call_oi": 5, "call_chg": 2, "put_oi": 28, "put_chg": -2}, {"strike": 38000, "call_oi": 90, "call_chg": 66, "put_oi": 333, "put_chg": -33}, {"strike": 38100, "call_oi": 0, "call_chg": 0, "put_oi": 15, "put_chg": -1}, {"strike": 38200, "call_oi": 5, "call_chg": 5, "put_oi": 27, "put_chg": 0}, {"strike": 38300, "call_oi": 8, "call_chg": 2, "put_oi": 15, "put_chg": -3}, {"strike": 38400, "call_oi": 5, "call_chg": 4, "put_oi": 18, "put_chg": -5}, {"strike": 38500, "call_oi": 31, "call_chg": 30, "put_oi": 48, "put_chg": 14}, {"strike": 38600, "call_oi": 454, "call_chg": 3, "put_oi": 36, "put_chg": -4}, {"strike": 38700, "call_oi": 21, "call_chg": -2, "put_oi": 11, "put_chg": 3}, {"strike": 38800, "call_oi": 28, "call_chg": 5, "put_oi": 429, "put_chg": 1}, {"strike": 38900, "call_oi": 4, "call_chg": 2, "put_oi": 58, "put_chg": 0}, {"strike": 39000, "call_oi": 176, "call_chg": 155, "put_oi": 400, "put_chg": -31}, {"strike": 39100, "call_oi": 2, "call_chg": -2, "put_oi": 12, "put_chg": 0}, {"strike": 39200, "call_oi": 17, "call_chg": 4, "put_oi": 26, "put_chg": -2}, {"strike": 39300, "call_oi": 23, "call_chg": 8, "put_oi": 57, "put_chg": 3}, {"strike": 39400, "call_oi": 25, "call_chg": 12, "put_oi": 34, "put_chg": -1}, {"strike": 39500, "call_oi": 34, "call_chg": 7, "put_oi": 34, "put_chg": -5}, {"strike": 39600, "call_oi": 32, "call_chg": 10, "put_oi": 29, "put_chg": -1}, {"strike": 39700, "call_oi": 18, "call_chg": 2, "put_oi": 9, "put_chg": -5}, {"strike": 39800, "call_oi": 27, "call_chg": 6, "put_oi": 25, "put_chg": 2}, {"strike": 39900, "call_oi": 17, "call_chg": 1, "put_oi": 22, "put_chg": 0}, {"strike": 40000, "call_oi": 1156, "call_chg": 490, "put_oi": 249, "put_chg": -14}, {"strike": 40100, "call_oi": 32, "call_chg": 13, "put_oi": 23, "put_chg": -6}, {"strike": 40200, "call_oi": 96, "call_chg": 3, "put_oi": 9, "put_chg": -5}, {"strike": 40300, "call_oi": 53, "call_chg": 9, "put_oi": 13, "put_chg": -7}, {"strike": 40400, "call_oi": 92, "call_chg": 4, "put_oi": 25, "put_chg": -6}, {"strike": 40500, "call_oi": 46, "call_chg": 5, "put_oi": 54, "put_chg": -10}, {"strike": 40600, "call_oi": 87, "call_chg": 7, "put_oi": 12, "put_chg": -5}, {"strike": 40700, "call_oi": 25, "call_chg": -3, "put_oi": 10, "put_chg": -5}, {"strike": 40800, "call_oi": 41, "call_chg": 6, "put_oi": 303, "put_chg": -10}, {"strike": 40900, "call_oi": 27, "call_chg": 1, "put_oi": 3, "put_chg": -8}, {"strike": 41000, "call_oi": 299, "call_chg": 73, "put_oi": 346, "put_chg": -44}, {"strike": 41100, "call_oi": 36, "call_chg": 0, "put_oi": 4, "put_chg": -5}, {"strike": 41200, "call_oi": 64, "call_chg": 21, "put_oi": 33, "put_chg": -5}, {"strike": 41300, "call_oi": 46, "call_chg": 1, "put_oi": 40, "put_chg": -1}, {"strike": 41400, "call_oi": 47, "call_chg": 0, "put_oi": 35, "put_chg": -5}, {"strike": 41500, "call_oi": 44, "call_chg": 6, "put_oi": 72, "put_chg": -5}, {"strike": 41600, "call_oi": 54, "call_chg": -3, "put_oi": 58, "put_chg": -12}, {"strike": 41700, "call_oi": 42, "call_chg": 0, "put_oi": 44, "put_chg": -12}, {"strike": 41800, "call_oi": 43, "call_chg": 3, "put_oi": 58, "put_chg": 0}, {"strike": 41900, "call_oi": 43, "call_chg": 8, "put_oi": 223, "put_chg": 0}, {"strike": 42000, "call_oi": 721, "call_chg": 63, "put_oi": 162, "put_chg": -15}, {"strike": 42100, "call_oi": 410, "call_chg": 1, "put_oi": 46, "put_chg": -10}, {"strike": 42200, "call_oi": 414, "call_chg": 1, "put_oi": 81, "put_chg": 0}, {"strike": 42300, "call_oi": 28, "call_chg": 4, "put_oi": 425, "put_chg": 0}, {"strike": 42400, "call_oi": 27, "call_chg": 3, "put_oi": 33, "put_chg": 0}, {"strike": 42500, "call_oi": 115, "call_chg": 33, "put_oi": 41, "put_chg": -9}, {"strike": 42600, "call_oi": 47, "call_chg": 2, "put_oi": 35, "put_chg": 0}, {"strike": 42700, "call_oi": 38, "call_chg": 4, "put_oi": 20, "put_chg": 0}, {"strike": 42800, "call_oi": 87, "call_chg": 1, "put_oi": 17, "put_chg": -5}, {"strike": 42900, "call_oi": 22, "call_chg": -3, "put_oi": 25, "put_chg": 0}, {"strike": 43000, "call_oi": 596, "call_chg": 151, "put_oi": 92, "put_chg": -29}, {"strike": 43100, "call_oi": 70, "call_chg": -6, "put_oi": 22, "put_chg": 0}, {"strike": 43200, "call_oi": 27, "call_chg": -3, "put_oi": 16, "put_chg": 0}, {"strike": 43300, "call_oi": 59, "call_chg": 1, "put_oi": 12, "put_chg": 0}, {"strike": 43400, "call_oi": 136, "call_chg": -5, "put_oi": 31, "put_chg": 0}, {"strike": 43500, "call_oi": 124, "call_chg": 21, "put_oi": 15, "put_chg": 0}, {"strike": 43600, "call_oi": 75, "call_chg": 1, "put_oi": 34, "put_chg": 0}, {"strike": 43700, "call_oi": 101, "call_chg": 3, "put_oi": 13, "put_chg": -1}, {"strike": 43800, "call_oi": 161, "call_chg": 55, "put_oi": 22, "put_chg": 0}, {"strike": 43900, "call_oi": 124, "call_chg": 0, "put_oi": 12, "put_chg": 0}, {"strike": 44000, "call_oi": 953, "call_chg": 376, "put_oi": 247, "put_chg": -1}, {"strike": 44100, "call_oi": 110, "call_chg": 0, "put_oi": 8, "put_chg": 0}, {"strike": 44200, "call_oi": 105, "call_chg": 0, "put_oi": 77, "put_chg": 0}, {"strike": 44300, "call_oi": 153, "call_chg": -1, "put_oi": 8, "put_chg": 0}, {"strike": 44400, "call_oi": 130, "call_chg": -1, "put_oi": 38, "put_chg": -1}, {"strike": 44500, "call_oi": 124, "call_chg": 3, "put_oi": 5, "put_chg": -2}, {"strike": 44600, "call_oi": 46, "call_chg": 14, "put_oi": 30, "put_chg": 0}, {"strike": 44700, "call_oi": 28, "call_chg": 2, "put_oi": 5, "put_chg": 0}, {"strike": 44800, "call_oi": 40, "call_chg": 0, "put_oi": 12, "put_chg": 0}, {"strike": 44900, "call_oi": 43, "call_chg": 0, "put_oi": 3, "put_chg": -1}, {"strike": 45000, "call_oi": 897, "call_chg": 76, "put_oi": 128, "put_chg": -7}, {"strike": 45100, "call_oi": 21, "call_chg": 1, "put_oi": 11, "put_chg": 0}, {"strike": 45200, "call_oi": 23, "call_chg": 0, "put_oi": 23, "put_chg": 0}, {"strike": 45300, "call_oi": 18, "call_chg": 1, "put_oi": 16, "put_chg": 0}, {"strike": 45400, "call_oi": 20, "call_chg": 0, "put_oi": 55, "put_chg": 0}, {"strike": 45500, "call_oi": 40, "call_chg": 0, "put_oi": 21, "put_chg": 0}, {"strike": 45600, "call_oi": 9, "call_chg": -2, "put_oi": 8, "put_chg": 0}, {"strike": 45700, "call_oi": 7, "call_chg": 0, "put_oi": 1, "put_chg": 0}, {"strike": 45800, "call_oi": 41, "call_chg": -2, "put_oi": 7, "put_chg": -8}, {"strike": 45900, "call_oi": 55, "call_chg": 2, "put_oi": 4, "put_chg": 0}, {"strike": 46000, "call_oi": 726, "call_chg": 84, "put_oi": 53, "put_chg": -17}, {"strike": 46100, "call_oi": 25, "call_chg": -5, "put_oi": 1, "put_chg": 0}, {"strike": 46200, "call_oi": 38, "call_chg": 0, "put_oi": 3, "put_chg": 0}, {"strike": 46300, "call_oi": 65, "call_chg": -5, "put_oi": 5, "put_chg": 0}, {"strike": 46400, "call_oi": 21, "call_chg": -1, "put_oi": 5, "put_chg": 0}, {"strike": 46500, "call_oi": 579, "call_chg": 23, "put_oi": 1, "put_chg": 0}, {"strike": 46600, "call_oi": 83, "call_chg": 1, "put_oi": 10, "put_chg": -2}, {"strike": 46700, "call_oi": 25, "call_chg": -2, "put_oi": 2, "put_chg": 0}, {"strike": 46800, "call_oi": 64, "call_chg": -23, "put_oi": 5, "put_chg": 0}, {"strike": 46900, "call_oi": 36, "call_chg": -4, "put_oi": 22, "put_chg": 0}, {"strike": 47000, "call_oi": 505, "call_chg": -194, "put_oi": 53, "put_chg": -25}, {"strike": 47100, "call_oi": 17, "call_chg": -1, "put_oi": 14, "put_chg": 0}, {"strike": 47200, "call_oi": 63, "call_chg": -2, "put_oi": 8, "put_chg": 0}, {"strike": 47300, "call_oi": 10, "call_chg": -2, "put_oi": 7, "put_chg": 0}, {"strike": 47400, "call_oi": 99, "call_chg": 0, "put_oi": 4, "put_chg": 0}, {"strike": 47500, "call_oi": 112, "call_chg": -9, "put_oi": 12, "put_chg": 0}, {"strike": 47600, "call_oi": 102, "call_chg": 0, "put_oi": 1, "put_chg": 0}, {"strike": 47700, "call_oi": 31, "call_chg": 8, "put_oi": 0, "put_chg": 0}, {"strike": 47800, "call_oi": 42, "call_chg": -1, "put_oi": 11, "put_chg": 0}, {"strike": 47900, "call_oi": 181, "call_chg": 20, "put_oi": 10, "put_chg": 0}, {"strike": 48000, "call_oi": 638, "call_chg": -36, "put_oi": 12, "put_chg": 0}, {"strike": 48100, "call_oi": 16, "call_chg": 2, "put_oi": 10, "put_chg": 0}, {"strike": 48200, "call_oi": 98, "call_chg": -8, "put_oi": 10, "put_chg": 0}, {"strike": 48300, "call_oi": 69, "call_chg": 2, "put_oi": 10, "put_chg": 0}, {"strike": 48400, "call_oi": 25, "call_chg": -14, "put_oi": 10, "put_chg": 0}, {"strike": 48500, "call_oi": 73, "call_chg": -5, "put_oi": 5, "put_chg": 0}, {"strike": 48600, "call_oi": 25, "call_chg": 5, "put_oi": 5, "put_chg": 0}, {"strike": 48700, "call_oi": 18, "call_chg": 0, "put_oi": 7, "put_chg": 0}, {"strike": 48800, "call_oi": 56, "call_chg": 1, "put_oi": 0, "put_chg": 0}, {"strike": 48900, "call_oi": 39, "call_chg": -5, "put_oi": 7, "put_chg": 0}, {"strike": 49000, "call_oi": 757, "call_chg": -50, "put_oi": 24, "put_chg": 0}, {"strike": 49100, "call_oi": 9, "call_chg": 0, "put_oi": 1, "put_chg": 0}, {"strike": 49200, "call_oi": 45, "call_chg": 1, "put_oi": 1, "put_chg": 0}, {"strike": 49300, "call_oi": 17, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 49400, "call_oi": 18, "call_chg": 2, "put_oi": 8, "put_chg": 0}, {"strike": 49500, "call_oi": 50, "call_chg": 2, "put_oi": 0, "put_chg": 0}, {"strike": 49600, "call_oi": 28, "call_chg": 1, "put_oi": 1, "put_chg": 0}, {"strike": 49700, "call_oi": 10, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 49800, "call_oi": 114, "call_chg": 0, "put_oi": 3399, "put_chg": 0}, {"strike": 49900, "call_oi": 105, "call_chg": -3, "put_oi": 0, "put_chg": 0}, {"strike": 50000, "call_oi": 1833, "call_chg": 10, "put_oi": 163, "put_chg": 0}, {"strike": 50100, "call_oi": 24, "call_chg": 2, "put_oi": 0, "put_chg": 0}, {"strike": 50200, "call_oi": 22, "call_chg": -5, "put_oi": 3, "put_chg": 0}, {"strike": 50300, "call_oi": 35, "call_chg": 3, "put_oi": 0, "put_chg": 0}, {"strike": 50400, "call_oi": 52, "call_chg": 0, "put_oi": 5, "put_chg": 0}, {"strike": 50500, "call_oi": 97, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 50600, "call_oi": 61, "call_chg": 0, "put_oi": 2, "put_chg": 0}, {"strike": 50700, "call_oi": 15, "call_chg": 2, "put_oi": 0, "put_chg": 0}, {"strike": 50800, "call_oi": 12, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 50900, "call_oi": 25, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 51000, "call_oi": 195, "call_chg": -27, "put_oi": 7, "put_chg": 0}, {"strike": 51100, "call_oi": 13, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 51200, "call_oi": 19, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 51300, "call_oi": 20, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 51400, "call_oi": 27, "call_chg": -8, "put_oi": 0, "put_chg": 0}, {"strike": 51500, "call_oi": 44, "call_chg": -10, "put_oi": 0, "put_chg": 0}, {"strike": 51600, "call_oi": 8, "call_chg": -3, "put_oi": 0, "put_chg": 0}, {"strike": 51700, "call_oi": 12, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 51800, "call_oi": 20, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 51900, "call_oi": 7, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 52000, "call_oi": 1193, "call_chg": -18, "put_oi": 4, "put_chg": 0}, {"strike": 52100, "call_oi": 56, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 52200, "call_oi": 8, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 52300, "call_oi": 15, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 52400, "call_oi": 49, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 52500, "call_oi": 69, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 52600, "call_oi": 47, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 52700, "call_oi": 26, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 52800, "call_oi": 45, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 52900, "call_oi": 44, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 53000, "call_oi": 1083, "call_chg": 297, "put_oi": 0, "put_chg": 0}, {"strike": 53100, "call_oi": 40, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 53200, "call_oi": 57, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 53300, "call_oi": 14, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 53400, "call_oi": 14, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 53500, "call_oi": 17, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 53600, "call_oi": 13, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 53700, "call_oi": 10, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 53800, "call_oi": 13, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 53900, "call_oi": 10, "call_chg": -1, "put_oi": 0, "put_chg": 0}, {"strike": 54000, "call_oi": 427, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 54100, "call_oi": 8, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 54200, "call_oi": 17, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 54300, "call_oi": 3, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 54400, "call_oi": 9, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 54500, "call_oi": 26, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 54600, "call_oi": 10, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 54700, "call_oi": 5, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 54800, "call_oi": 5, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 54900, "call_oi": 4, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 55000, "call_oi": 195, "call_chg": 1, "put_oi": 0, "put_chg": 0}, {"strike": 55100, "call_oi": 9, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 55200, "call_oi": 4, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 55300, "call_oi": 10, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 55400, "call_oi": 8, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 55500, "call_oi": 6, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 55600, "call_oi": 10, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 55700, "call_oi": 2, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 55800, "call_oi": 14, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 55900, "call_oi": 15, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 56000, "call_oi": 26, "call_chg": -1, "put_oi": 0, "put_chg": 0}, {"strike": 56100, "call_oi": 3, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 56200, "call_oi": 5, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 56400, "call_oi": 2, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 56500, "call_oi": 207, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 56600, "call_oi": 229, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 56700, "call_oi": 201, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 56800, "call_oi": 401, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 56900, "call_oi": 201, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 57000, "call_oi": 568, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 57100, "call_oi": 403, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 57200, "call_oi": 406, "call_chg": 0, "put_oi": 129, "put_chg": 0}, {"strike": 57300, "call_oi": 251, "call_chg": 0, "put_oi": 0, "put_chg": 0}, {"strike": 57400, "call_oi": 1140, "call_chg": 269, "put_oi": 0, "put_chg": 0}]}]}</script>
+<script>
+(function () {
+  const root = document.documentElement;
+  const savedTheme = localStorage.getItem("txo_report_theme");
+  if (savedTheme === "light" || savedTheme === "dark") {
+    root.setAttribute("data-theme", savedTheme);
+  }
+  const themeBtn = document.getElementById("themeToggle");
+  if (themeBtn) {
+    themeBtn.addEventListener("click", function () {
+      const next = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
+      root.setAttribute("data-theme", next);
+      localStorage.setItem("txo_report_theme", next);
+    });
+  }
+
+  const dataEl = document.getElementById("txo-data");
+  if (!dataEl) return;
+  const payload = JSON.parse(dataEl.textContent || "{}");
+  const layers = payload.layers || [];
+  const refSpot = payload.ref_spot;
+
+  let activeIdx = 0;
+  let activeRange = "near";
+
+  const contractTabsEl = document.getElementById("contractTabs");
+  const rangeTabsEl = document.getElementById("rangeTabs");
+  const svgEl = document.getElementById("oiChartSvg");
+  const pillsEl = document.getElementById("oiSummaryPills");
+  const notesEl = document.getElementById("oiLayerNotes");
+  const tooltipEl = document.getElementById("oiTooltip");
+
+  function fmtNum(v, signed) {
+    if (v === null || v === undefined || Number.isNaN(v)) return "—";
+    const n = Math.round(v);
+    const absStr = Math.abs(n).toLocaleString("en-US");
+    if (!signed) return (n < 0 ? "-" : "") + absStr;
+    return (n > 0 ? "+" : (n < 0 ? "-" : "+")) + absStr;
+  }
+
+  function fmtTopList(list) {
+    if (!list || !list.length) return "無顯著部位";
+    return list.map(function (it) {
+      return fmtNum(it[0], false) + " (" + fmtNum(it[1], false) + "口, " + fmtNum(it[2], true) + ")";
+    }).join("、");
+  }
+
+  function renderContractTabs() {
+    contractTabsEl.innerHTML = "";
+    layers.forEach(function (layer, idx) {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "tab-btn" + (idx === activeIdx ? " active" : "");
+      btn.textContent = layer.label;
+      btn.addEventListener("click", function () {
+        activeIdx = idx;
+        renderContractTabs();
+        renderActiveLayer();
+      });
+      contractTabsEl.appendChild(btn);
+    });
+  }
+
+  if (rangeTabsEl) {
+    rangeTabsEl.querySelectorAll(".tab-btn").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        activeRange = btn.getAttribute("data-range") || "near";
+        rangeTabsEl.querySelectorAll(".tab-btn").forEach(function (b) {
+          b.classList.toggle("active", b === btn);
+        });
+        renderActiveLayer();
+      });
+    });
+  }
+
+  function svgNode(tag, attrs, text) {
+    const el = document.createElementNS("http://www.w3.org/2000/svg", tag);
+    Object.keys(attrs || {}).forEach(function (k) {
+      el.setAttribute(k, String(attrs[k]));
+    });
+    if (text !== undefined && text !== null) {
+      el.textContent = String(text);
+    }
+    return el;
+  }
+
+  function renderActiveLayer() {
+    const layer = layers[activeIdx];
+    if (!layer) {
+      svgEl.setAttribute("viewBox", "0 0 600 120");
+      svgEl.innerHTML = "";
+      svgEl.appendChild(svgNode("text", { x: 300, y: 65, "text-anchor": "middle", fill: "var(--muted)", "font-size": 13 }, "尚無可用選擇權履約價資料"));
+      pillsEl.innerHTML = "";
+      notesEl.innerHTML = "";
+      return;
+    }
+
+    const rawSeries = layer.strike_series || [];
+    let filtered = rawSeries;
+    if (activeRange === "near" && refSpot !== null && refSpot !== undefined) {
+      const nearRows = rawSeries.filter(function (r) {
+        return r.strike >= refSpot - 3500 && r.strike <= refSpot + 3500;
+      });
+      if (nearRows.length >= 3) {
+        filtered = nearRows;
+      }
+    }
+    // 高履約價在上、低履約價在下
+    const rows = filtered.slice().sort(function (a, b) { return b.strike - a.strike; });
+
+    if (!rows.length) {
+      svgEl.setAttribute("viewBox", "0 0 600 120");
+      svgEl.innerHTML = "";
+      svgEl.appendChild(svgNode("text", { x: 300, y: 65, "text-anchor": "middle", fill: "var(--muted)", "font-size": 13 }, "此範圍內無未平倉量"));
+    } else {
+      const W = 680;
+      const rowH = rows.length > 35 ? 19 : 23;
+      const padT = 22;
+      const padB = 18;
+      const centerX = 340;
+      const labelHalf = 36;
+      const maxBarW = 242;
+      const H = padT + padB + rows.length * rowH;
+
+      svgEl.setAttribute("viewBox", "0 0 " + W + " " + H);
+      svgEl.innerHTML = "";
+
+      let maxOI = 1;
+      rows.forEach(function (r) {
+        if (r.call_oi > maxOI) maxOI = r.call_oi;
+        if (r.put_oi > maxOI) maxOI = r.put_oi;
+      });
+
+      const leftAxisX = centerX - labelHalf;
+      const rightAxisX = centerX + labelHalf;
+
+      svgEl.appendChild(svgNode("text", { x: leftAxisX - 4, y: 14, "text-anchor": "end", fill: "var(--put)", "font-size": 11, "font-weight": 700 }, "← Put OI (支撐)"));
+      svgEl.appendChild(svgNode("text", { x: centerX, y: 14, "text-anchor": "middle", fill: "var(--muted)", "font-size": 11, "font-weight": 700 }, "履約價"));
+      svgEl.appendChild(svgNode("text", { x: rightAxisX + 4, y: 14, "text-anchor": "start", fill: "var(--call)", "font-size": 11, "font-weight": 700 }, "Call OI (壓力) →"));
+
+      svgEl.appendChild(svgNode("line", { x1: leftAxisX, y1: padT, x2: leftAxisX, y2: H - padB, stroke: "var(--border)", "stroke-width": 1 }));
+      svgEl.appendChild(svgNode("line", { x1: rightAxisX, y1: padT, x2: rightAxisX, y2: H - padB, stroke: "var(--border)", "stroke-width": 1 }));
+
+      rows.forEach(function (r, idx) {
+        const y = padT + idx * rowH;
+        const barY = y + 3;
+        const barH = Math.max(rowH - 7, 9);
+
+        const rowBg = svgNode("rect", {
+          x: 6, y: y, width: W - 12, height: rowH, rx: 4,
+          fill: "transparent", class: "oi-row-hit", style: "cursor: crosshair;"
+        });
+
+        if (r.put_oi > 0) {
+          const pw = Math.max((r.put_oi / maxOI) * maxBarW, 2);
+          svgEl.appendChild(svgNode("rect", {
+            x: leftAxisX - pw, y: barY, width: pw, height: barH, rx: 3,
+            fill: "var(--put)", opacity: r.put_chg > 0 ? 0.92 : 0.72
+          }));
+          const pTxt = fmtNum(r.put_oi, false) + (r.put_chg !== 0 ? " (" + fmtNum(r.put_chg, true) + ")" : "");
+          svgEl.appendChild(svgNode("text", {
+            x: leftAxisX - pw - 5, y: y + rowH * 0.68,
+            "text-anchor": "end", fill: r.put_chg >= 500 ? "var(--put)" : "var(--muted)",
+            "font-size": rows.length > 35 ? 9.5 : 10.5, "font-weight": r.put_oi >= maxOI * 0.6 ? 700 : 500
+          }, pTxt));
+        }
+
+        if (r.call_oi > 0) {
+          const cw = Math.max((r.call_oi / maxOI) * maxBarW, 2);
+          svgEl.appendChild(svgNode("rect", {
+            x: rightAxisX, y: barY, width: cw, height: barH, rx: 3,
+            fill: "var(--call)", opacity: r.call_chg > 0 ? 0.92 : 0.72
+          }));
+          const cTxt = fmtNum(r.call_oi, false) + (r.call_chg !== 0 ? " (" + fmtNum(r.call_chg, true) + ")" : "");
+          svgEl.appendChild(svgNode("text", {
+            x: rightAxisX + cw + 5, y: y + rowH * 0.68,
+            "text-anchor": "start", fill: r.call_chg >= 500 ? "var(--call)" : "var(--muted)",
+            "font-size": rows.length > 35 ? 9.5 : 10.5, "font-weight": r.call_oi >= maxOI * 0.6 ? 700 : 500
+          }, cTxt));
+        }
+
+        const isNearRef = refSpot !== null && refSpot !== undefined && Math.abs(r.strike - refSpot) <= 150;
+        svgEl.appendChild(svgNode("text", {
+          x: centerX, y: y + rowH * 0.7,
+          "text-anchor": "middle",
+          fill: isNearRef ? "var(--accent)" : "var(--text)",
+          "font-size": rows.length > 35 ? 10 : 11,
+          "font-weight": isNearRef ? 700 : 600
+        }, fmtNum(r.strike, false)));
+
+        rowBg.addEventListener("mousemove", function (ev) {
+          rowBg.setAttribute("fill", "var(--focus-col)");
+          tooltipEl.style.display = "block";
+          tooltipEl.innerHTML =
+            "<div style='font-weight:700;margin-bottom:4px'>履約價 " + fmtNum(r.strike, false) + "</div>" +
+            "<div style='color:var(--call)'>Call OI：" + fmtNum(r.call_oi, false) + " 口（" + fmtNum(r.call_chg, true) + "）</div>" +
+            "<div style='color:var(--put)'>Put OI：" + fmtNum(r.put_oi, false) + " 口（" + fmtNum(r.put_chg, true) + "）</div>";
+          tooltipEl.style.left = Math.min(ev.clientX + 14, window.innerWidth - 200) + "px";
+          tooltipEl.style.top = Math.min(ev.clientY + 14, window.innerHeight - 90) + "px";
+        });
+        rowBg.addEventListener("mouseleave", function () {
+          rowBg.setAttribute("fill", "transparent");
+          tooltipEl.style.display = "none";
+        });
+        svgEl.appendChild(rowBg);
+      });
+
+      function findRefY(price) {
+        if (price === null || price === undefined) return null;
+        if (price > rows[0].strike) return padT;
+        if (price < rows[rows.length - 1].strike) return H - padB;
+        for (let i = 0; i < rows.length; i++) {
+          if (rows[i].strike === price) return padT + (i + 0.5) * rowH;
+          if (i + 1 < rows.length && rows[i].strike > price && price > rows[i + 1].strike) {
+            const frac = (rows[i].strike - price) / (rows[i].strike - rows[i + 1].strike);
+            return padT + (i + 0.5 + frac) * rowH;
+          }
+        }
+        return null;
+      }
+
+      function drawRefLine(price, color, labelText, alignRight) {
+        const ry = findRefY(price);
+        if (ry === null) return;
+        svgEl.appendChild(svgNode("line", {
+          x1: 12, y1: ry, x2: W - 12, y2: ry,
+          stroke: color, "stroke-width": 1.4, "stroke-dasharray": "5,4", "pointer-events": "none"
+        }));
+        svgEl.appendChild(svgNode("text", {
+          x: alignRight ? W - 14 : 14,
+          y: Math.max(padT + 9, ry - 3),
+          "text-anchor": alignRight ? "end" : "start",
+          fill: color, "font-size": 10.5, "font-weight": 700, "pointer-events": "none"
+        }, labelText));
+      }
+
+      if (layer.max_pain !== null && layer.max_pain !== undefined) {
+        drawRefLine(layer.max_pain, "var(--warn)", "Max Pain " + fmtNum(layer.max_pain, false), true);
+      }
+      if (refSpot !== null && refSpot !== undefined) {
+        const refTag = payload.taiex_is_est ? "平價推估 " : "參考點位 ";
+        drawRefLine(refSpot, "var(--accent)", refTag + Math.round(refSpot).toLocaleString("en-US"), false);
+      }
+    }
+
+    // Summary pills
+    const ceil = layer.call_top3 && layer.call_top3[0];
+    const floor = layer.put_top3 && layer.put_top3[0];
+    pillsEl.innerHTML =
+      "<div class='sum-pill-box'><div class='sum-pill-lbl'>天花板 / 地板 / Max Pain</div>" +
+      "<div class='sum-pill-val num'><span style='color:var(--call)'>" + (ceil ? fmtNum(ceil[0], false) : "—") + "</span> / " +
+      "<span style='color:var(--put)'>" + (floor ? fmtNum(floor[0], false) : "—") + "</span> / " +
+      "<span style='color:var(--warn)'>" + (layer.max_pain ? fmtNum(layer.max_pain, false) : "—") + "</span></div></div>" +
+      "<div class='sum-pill-box'><div class='sum-pill-lbl'>近價平 (±2,000) 壓力牆</div>" +
+      "<div class='sum-pill-val num' style='color:var(--call)'>" + fmtTopList(layer.near_atm_calls) + "</div></div>" +
+      "<div class='sum-pill-box'><div class='sum-pill-lbl'>近價平 (±2,000) 支撐牆</div>" +
+      "<div class='sum-pill-val num' style='color:var(--put)'>" + fmtTopList(layer.near_atm_puts) + "</div></div>";
+
+    const noteLines = [];
+    const sigParts = [];
+    if (layer.call_max_add) sigParts.push("Call " + fmtNum(layer.call_max_add[0], false) + " 大增 " + fmtNum(layer.call_max_add[2], true) + " 口");
+    if (layer.call_max_cut) sigParts.push("Call " + fmtNum(layer.call_max_cut[0], false) + " 減少 " + fmtNum(layer.call_max_cut[2], true) + " 口");
+    if (layer.put_max_add) sigParts.push("Put " + fmtNum(layer.put_max_add[0], false) + " 大增 " + fmtNum(layer.put_max_add[2], true) + " 口");
+    if (layer.put_max_cut) sigParts.push("Put " + fmtNum(layer.put_max_cut[0], false) + " 減少 " + fmtNum(layer.put_max_cut[2], true) + " 口");
+    if (sigParts.length) {
+      noteLines.push("<div><strong>單日 OI 異動：</strong>" + sigParts.join("；") + "</div>");
+    }
+    if (layer.deep_itm_put) {
+      noteLines.push("<div class='warn-text'>※ 深價內 Put 備註：最大 Put OI 位於深價內 " + fmtNum(layer.deep_itm_put[0], false) + "（" + fmtNum(layer.deep_itm_put[1], false) + " 口），屬鎖單／避險部位，已排除於地板支撐之外。</div>");
+    }
+    if (layer.deep_itm_call) {
+      noteLines.push("<div class='warn-text'>※ 深價內 Call 備註：最大 Call OI 位於深價內 " + fmtNum(layer.deep_itm_call[0], false) + "（" + fmtNum(layer.deep_itm_call[1], false) + " 口），屬鎖單／避險部位，已排除於天花板壓力之外。</div>");
+    }
+    notesEl.innerHTML = noteLines.join("");
+  }
+
+  renderContractTabs();
+  renderActiveLayer();
+})();
+</script>
+</body>
+</html>
