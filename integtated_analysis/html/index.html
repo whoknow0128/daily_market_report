@@ -105,6 +105,23 @@ body {
 }
 .card-title-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 12px; }
 .card-title { font-size: 0.99rem; font-weight: 700; }
+.disclaimer-footer {
+  margin-top: 4px;
+  background: var(--surface-2);
+  border-left: 4px solid var(--warn);
+  font-size: 0.78rem;
+  color: var(--muted);
+  line-height: 1.65;
+}
+.disclaimer-title {
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: var(--warn);
+  margin-bottom: 6px;
+}
+.disclaimer-footer p { margin-bottom: 4px; }
+.disclaimer-footer p:last-child { margin-bottom: 0; }
+.disclaimer-footer strong { color: var(--text); font-weight: 600; }
 
 
 .quick-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
@@ -132,7 +149,7 @@ table.idx-table th { color: var(--muted); font-size: 0.78rem; border-bottom: 1px
         <span class="pill badge-info num">共 2 個交易日</span>
       </div>
       <div class="header-actions">
-        <span class="pill badge-neutral num">索引更新：2026/11/20 17:28</span>
+        <span class="pill badge-neutral num">索引更新：2026/11/20 18:28</span>
         <button id="themeToggle" class="theme-btn" type="button">🌓 切換淺色/深色</button>
       </div>
     </div>
@@ -168,6 +185,14 @@ table.idx-table th { color: var(--muted); font-size: 0.78rem; border-bottom: 1px
       </table>
     </div>
   </section>
+
+  <footer class="card disclaimer-footer" aria-label="免責聲明">
+    <div class="disclaimer-title">⚠️ 免責聲明（Disclaimer）</div>
+    <p>1. 本站與本系統自動產製之所有臺指選擇權（TXO）、臺指期（TXF）及現貨三大法人（T86）盤後數據統計、族群歸類與操作意圖解讀，<strong>僅供個人程式化籌碼分析與研究參考，不構成任何形式之投資建議、買賣邀約或獲利保證</strong>。</p>
+    <p>2. 原始數據取自臺灣證券交易所（TWSE）與臺灣期貨交易所（TAIFEX）公開盤後資訊，經自動化程式擷取、清理與統計產出；若因盤後修訂、傳輸延遲或分類口徑限制產生差異，<strong>一切資料請以各交易所官方公告為準</strong>。</p>
+    <p>3. 股市、期貨與選擇權具備高槓桿與高度波動風險，<strong>任何交易決策請審慎評估自身風險承受能力，並由投資人自行負擔相關交易風險與盈虧責任</strong>。</p>
+  </footer>
+
 </div>
 <script>
 (function () {

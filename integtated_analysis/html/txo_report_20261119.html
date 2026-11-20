@@ -221,6 +221,23 @@
     border-radius: 8px;
     padding: 6px 9px;
   }
+  .disclaimer-footer {
+    margin-top: 16px;
+    background: var(--surface-2);
+    border-left: 4px solid var(--warn);
+    font-size: 0.78rem;
+    color: var(--muted);
+    line-height: 1.65;
+  }
+  .disclaimer-title {
+    font-size: 0.86rem;
+    font-weight: 700;
+    color: var(--warn);
+    margin-bottom: 6px;
+  }
+  .disclaimer-footer p { margin: 0 0 4px; }
+  .disclaimer-footer p:last-child { margin-bottom: 0; }
+  .disclaimer-footer strong { color: var(--text); font-weight: 600; }
   .theme-btn:hover { border-color: var(--accent); }
 
   /* Section A: 6 KPI Cards */
@@ -890,6 +907,14 @@
 <circle cx="293.6" cy="45.6" r="3.6" fill="var(--call)" stroke="var(--surface)" stroke-width="1.2"><title>11/19 TAIWAN VIX: 49.27</title></circle>
 </svg></div></div><div class="table-wrap" style="margin-top:14px"><table class="data-table"><thead><tr><th>日期</th><th class="text-right">加權漲跌</th><th class="text-right">正逆價差</th><th class="text-right">外資現貨(億)</th><th class="text-right">自營自行/避險(億)</th><th class="text-right">外資期貨淨口數</th><th class="text-right">投信期貨增減</th><th class="text-right">小台散戶比</th><th class="text-right">微台散戶比</th><th class="text-right">P/C (OI)</th><th class="text-right">VIX</th></tr></thead><tbody><tr><td class="num"><strong>2026/11/13</strong></td><td class="num text-right up">+583.2</td><td class="num text-right up">+158.9</td><td class="num text-right up">+288.4</td><td class="num text-right"><span class="up">+43.0</span> / <span class="up">+25.9</span></td><td class="num text-right down">-100,870</td><td class="num text-right up">+1,022</td><td class="num text-right">+10.7%</td><td class="num text-right flat">-2.6%</td><td class="num text-right">57.8%</td><td class="num text-right">37.84</td></tr><tr><td class="num"><strong>2026/11/16</strong></td><td class="num text-right down">-2,635.0</td><td class="num text-right down">-155.1</td><td class="num text-right down">-701.9</td><td class="num text-right"><span class="up">+31.2</span> / <span class="down">-290.2</span></td><td class="num text-right down">-96,787</td><td class="num text-right down">-7,517</td><td class="num text-right">+14.8%</td><td class="num text-right warn-text">+33.9%</td><td class="num text-right">53.8%</td><td class="num text-right">48.72</td></tr><tr><td class="num"><strong>2026/11/17</strong></td><td class="num text-right down">-948.0</td><td class="num text-right down">-19.1</td><td class="num text-right down">-380.9</td><td class="num text-right"><span class="up">+63.9</span> / <span class="down">-220.8</span></td><td class="num text-right down">-97,896</td><td class="num text-right down">-1,180</td><td class="num text-right">+8.5%</td><td class="num text-right warn-text">+36.6%</td><td class="num text-right">54.1%</td><td class="num text-right">49.54</td></tr><tr><td class="num"><strong>2026/11/18</strong></td><td class="num text-right up">+102.8</td><td class="num text-right down">-169.9</td><td class="num text-right down">-765.6</td><td class="num text-right"><span class="up">+54.7</span> / <span class="down">-96.7</span></td><td class="num text-right down">-99,438</td><td class="num text-right up">+2,347</td><td class="num text-right">+16.4%</td><td class="num text-right warn-text">+43.0%</td><td class="num text-right">39.8%</td><td class="num text-right">45.86</td></tr><tr><td class="num"><strong>2026/11/19</strong></td><td class="num text-right down">-1,768.0</td><td class="num text-right up">+222.1</td><td class="num text-right down">-243.1</td><td class="num text-right"><span class="down">-18.6</span> / <span class="down">-214.4</span></td><td class="num text-right down">-99,219</td><td class="num text-right down">-1,782</td><td class="num text-right">+6.3%</td><td class="num text-right warn-text">+55.4%</td><td class="num text-right">41.0%</td><td class="num text-right">49.27</td></tr></tbody></table></div>
   </section>
+
+  <footer class="card disclaimer-footer" aria-label="免責聲明">
+    <div class="disclaimer-title">⚠️ 免責聲明（Disclaimer）</div>
+    <p>1. 本站與本系統自動產製之所有臺指選擇權（TXO）、臺指期（TXF）及現貨三大法人（T86）盤後數據統計、族群歸類與操作意圖解讀，<strong>僅供個人程式化籌碼分析與研究參考，不構成任何形式之投資建議、買賣邀約或獲利保證</strong>。</p>
+    <p>2. 原始數據取自臺灣證券交易所（TWSE）與臺灣期貨交易所（TAIFEX）公開盤後資訊，經自動化程式擷取、清理與統計產出；若因盤後修訂、傳輸延遲或分類口徑限制產生差異，<strong>一切資料請以各交易所官方公告為準</strong>。</p>
+    <p>3. 股市、期貨與選擇權具備高槓桿與高度波動風險，<strong>任何交易決策請審慎評估自身風險承受能力，並由投資人自行負擔相關交易風險與盈虧責任</strong>。</p>
+  </footer>
+
 </div>
 
 <div id="oiTooltip" class="oi-tooltip"></div>
