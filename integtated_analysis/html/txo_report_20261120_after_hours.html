@@ -304,6 +304,49 @@
     padding: 16px 18px;
     box-shadow: var(--shadow);
   }
+  .ah-fut-section { margin-bottom: 16px; }
+  .ah-kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+  }
+  @media (max-width: 1024px) { .ah-kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 600px) { .ah-kpi-grid { grid-template-columns: 1fr; } }
+  .ah-kpi-box {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .ah-kpi-lbl {
+    font-size: 0.76rem;
+    color: var(--muted);
+    font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+    gap: 6px;
+  }
+  .ah-kpi-val { font-size: 1.24rem; font-weight: 700; line-height: 1.25; }
+  .ah-kpi-sub { font-size: 0.74rem; color: var(--muted); }
+  table.ah-fut-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  table.ah-fut-table th, table.ah-fut-table td {
+    padding: 8px 11px;
+    border-bottom: 1px solid var(--border);
+    text-align: right;
+  }
+  table.ah-fut-table th { color: var(--muted); font-size: 0.76rem; font-weight: 600; }
+  table.ah-fut-table tbody tr:last-child td { border-bottom: none; }
   .card-title-row {
     display: flex;
     flex-wrap: wrap;
@@ -724,7 +767,7 @@
         <button id="themeToggle" class="theme-btn" type="button">🌓 切換淺色/深色</button>
       </div>
     </div>
-    <p class="header-sub">現貨外資賣超 -94.13 億元；外資期貨淨口數變化溫和 (+1,356 口)；外資選擇權 Buy Call 淨契約金額明顯增加 (+768,979 千元)；P/C Ratio (OI) 降至 30.05% (&lt;90% 偏空架構)；TAIWAN VIX 單日跳升 +2.93，避險恐慌升溫 ｜ 夜盤成交 252,412 口（Call 134,747 / Put 117,665）｜ OI 採最近日盤 20261120</p>
+    <p class="header-sub">現貨外資賣超 -94.13 億元；外資期貨淨口數變化溫和 (+1,356 口)；外資選擇權 Buy Call 淨契約金額明顯增加 (+768,979 千元)；P/C Ratio (OI) 降至 30.05% (&lt;90% 偏空架構)；TAIWAN VIX 單日跳升 +2.93，避險恐慌升溫 ｜ 夜盤成交 252,412 口（Call 134,747 / Put 117,665）｜ OI 採最近日盤 20261120 ｜ 夜盤期貨收 38,107 (-500) ｜ 外資夜盤 TXF +2,657 口</p>
   </header>
 
   <!-- Section A: 6 KPI Cards -->
@@ -760,6 +803,8 @@
       <div class="kpi-sub">避險買盤與震幅放大，嚴控部位槓桿</div>
     </div>
   </section>
+
+  <section class="card ah-fut-section" aria-label="夜盤期貨與外資交易動態"><div class="card-title-row"><h2 class="card-title">🌙 夜盤外資與三大法人臺指期貨操作變化</h2><div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center"><span class="pill badge-up">積極回補／偏多</span><span class="mini-pill badge-neutral">僅含夜盤交易淨額（官方於 15:00 後結算 OI）</span></div></div><div class="ah-kpi-grid"><div class="ah-kpi-box"><div class="ah-kpi-lbl">臺指期夜盤（202612）<span class="num">量 74,153 口</span></div><div class="ah-kpi-val num down">38,107 <span style="font-size:0.86rem">(-500 點)</span></div><div class="ah-kpi-sub num">開 39,200 / 高 39,765 / 低 37,931</div></div><div class="ah-kpi-box"><div class="ah-kpi-lbl">外資大台 (TXF) 夜盤淨交易</div><div class="ah-kpi-val num up">+2,657 口</div><div class="ah-kpi-sub num">金額 +208.28 億 ｜ 多 48,306 / 空 45,649</div></div><div class="ah-kpi-box"><div class="ah-kpi-lbl">外資全臺指等效大台 (含大小微)</div><div class="ah-kpi-val num up">+3,189.4 口</div><div class="ah-kpi-sub num">三商品合計金額 +250.34 億</div></div><div class="ah-kpi-box"><div class="ah-kpi-lbl">推估外資夜盤後淨 OI（參考）</div><div class="ah-kpi-val num down">-96,562 口</div><div class="ah-kpi-sub num">前日盤(2026/11/19) -99,219 + 夜盤 TXF（不含沖銷）</div></div></div><div style="overflow-x:auto;margin-top:12px"><table class="ah-fut-table"><thead><tr><th style="text-align:left">期貨商品</th><th>外資淨口數 (契約金額)</th><th>投信淨口數 (契約金額)</th><th>自營商淨口數 (契約金額)</th></tr></thead><tbody><tr><td style="text-align:left"><strong>臺股期貨</strong> <span class="muted">(TXF)</span></td><td class="num"><span class="up" style="font-weight:700">+2,657</span><span class="muted" style="font-size:0.74rem"> (+208.28 億)</span></td><td class="num"><span class="flat" style="font-weight:700">+0</span><span class="muted" style="font-size:0.74rem"> (+0.00 億)</span></td><td class="num"><span class="down" style="font-weight:700">-366</span><span class="muted" style="font-size:0.74rem"> (-29.00 億)</span></td></tr><tr><td style="text-align:left"><strong>小型臺指</strong> <span class="muted">(MXF)</span></td><td class="num"><span class="up" style="font-weight:700">+1,311</span><span class="muted" style="font-size:0.74rem"> (+25.77 億)</span></td><td class="num"><span class="flat" style="font-weight:700">+0</span><span class="muted" style="font-size:0.74rem"> (+0.00 億)</span></td><td class="num"><span class="up" style="font-weight:700">+864</span><span class="muted" style="font-size:0.74rem"> (+16.32 億)</span></td></tr><tr><td style="text-align:left"><strong>微型臺指</strong> <span class="muted">(TMF)</span></td><td class="num"><span class="up" style="font-weight:700">+4,093</span><span class="muted" style="font-size:0.74rem"> (+16.29 億)</span></td><td class="num"><span class="flat" style="font-weight:700">+0</span><span class="muted" style="font-size:0.74rem"> (+0.00 億)</span></td><td class="num"><span class="up" style="font-weight:700">+4,161</span><span class="muted" style="font-size:0.74rem"> (+16.29 億)</span></td></tr></tbody></table></div></section>
 
   <!-- Section A2: Market Insights & Tactical Playbook -->
   <section class="card insights-card" aria-label="盤後深度洞察與明日操作劇本"><div class="card-title-row"><h2 class="card-title">🎯 盤後深度洞察與明日操作劇本</h2><span class="pill pill-lg badge-down">偏空操作・防急彈洗盤</span></div><div class="insight-banner">外資期現貨持續偏空、散戶逆勢抄底至 +53.0%、自營避險大幅賣超助跌，但短線因 P/C Ratio 30.1% 極度悲觀 與 VIX 52.2 高波動，極易引發劇烈急彈與雙向洗盤，操作宜反彈遇壓偏空、嚴禁低檔追空。</div><div class="insights-layout"><div><div class="subsec-title">關鍵籌碼洞察</div><div class="insight-list"><div class="insight-item insight-info"><div class="insight-item-hdr"><span class="mini-pill badge-info">散戶反向</span><span class="insight-item-title">散戶多單出現鬆動減碼（微台 +52.99%），留意籌碼清洗進度</span></div><div class="insight-item-body num">微台散戶多空比近 5 日軌跡為 +33.9% → +36.6% → +43.0% → +55.4% → +53.0%；今日微台散戶淨部位 +47,192 口（單日 -3,307 口），多空比 +52.99%；小台為 -1.79%（淨 -565 口，單日 -2,539 口）。高檔套牢散戶開始減碼停損，若後續多空比持續收斂，反彈壓力將逐步減輕。</div></div><div class="insight-item insight-down"><div class="insight-item-hdr"><span class="mini-pill badge-down">外資與大額法人</span><span class="insight-item-title">外資現貨連 5 賣提款 -2,185.7 億，期貨近 10 萬口空單仍壓陣</span></div><div class="insight-item-body num">外資現貨已連賣 5 日累計 -2,185.7 億元（今日 -94.1 億）；臺指期淨未平倉 -97,863 口（僅微調 +1,356 口，空單仍紋絲不動、未見大幅獲利了結轉折）；前十大特定法人近月淨部位由近期 +8,208 口變動至 +2,973 口，今日單日 -979 口。</div></div><div class="insight-item insight-down"><div class="insight-item-hdr"><span class="mini-pill badge-down">自營與投信解碼</span><span class="insight-item-title">投信期貨近 4 日累計 -4,807 口</span></div><div class="insight-item-body num">自營自行買賣今日 -50.7 億；自營避險部位連 5 日賣超累計 -1,112.3 億（今日 -290.2 億），形成權證／選擇權對沖被動助跌賣壓；投信臺指期近 4 日累計變動 -4,807 口（今日 -4,192 口，總淨額 +87,599 口），反映正 2 ETF 隨波動減碼降低曝險。</div></div><div class="insight-item insight-warn"><div class="insight-item-hdr"><span class="mini-pill badge-warn">正逆價差</span><span class="insight-item-title">期現貨出現大幅逆價差 -158.29 點</span></div><div class="insight-item-body num">期貨相對現貨貼水擴大，代表法人與市場避險賣壓沉重；短線已反映偏空預期，急跌段不宜過度追空以防價差快速收斂反彈。</div></div><div class="insight-item insight-info"><div class="insight-item-hdr"><span class="mini-pill badge-info">選擇權真實流向</span><span class="insight-item-title">選擇權當日真實主力資金：投信 Call（-14.98 億）</span></div><div class="insight-item-body num">當日真實主力交易為投信當日淨賣 Call -23,050 口（-14.98 億）、外資當日淨買 Call +10,510 口（+8.61 億）、自營商當日淨買 Call -22,318 口（+3.28 億）。</div></div><div class="insight-item insight-info"><div class="insight-item-hdr"><span class="mini-pill badge-info">夜盤成交結構</span><span class="insight-item-title">夜盤總量 252,412 口（Call 成交略占優勢）</span></div><div class="insight-item-body num">夜盤 Call 成交 134,747 口 / Put 成交 117,665 口，日盤基準 P/C Ratio 為 30.05%；夜盤不更新未平倉與三大法人明細，支撐壓力牆暫沿用最近日盤結構。</div></div></div></div><div><div class="subsec-title">明日實戰操作劇本</div><div class="playbook-list"><div class="playbook-item"><div class="playbook-step num">01</div><div><div class="playbook-title">反彈壓力與偏空觀察區</div><div class="playbook-body num">短線反彈優先觀察 Max Pain 35,200 ｜ Pivot 中軸 36,370 ｜ 週選壓力牆 37,000 (244口)、38,000 (676口) ｜ R1 37,178。若反彈至此區出現量縮或上影線轉弱，是較具風報比的偏空觀察點，避免在急殺低檔追空。</div></div></div><div class="playbook-item"><div class="playbook-step num">02</div><div><div class="playbook-title">下檔支撐停利與倒莊警戒線</div><div class="playbook-body num">下檔依序關注 Pivot S1 35,068 ｜ 週選支撐牆 36,000 (401口)、34,500 (609口) ｜ S2 34,260。因 P/C Ratio 僅 30.1% 空頭擁擠，回測第一支撐帶時空單宜分批減碼落袋。若帶量貫破 34,500 最大 Put 地板，須防賣方停損對沖引發下殺加速（Gamma Squeeze）。</div></div></div><div class="playbook-item"><div class="playbook-step num">03</div><div><div class="playbook-title">結算特性與槓桿風控紀律</div><div class="playbook-body num">VIX 處於 52.20 高波動區，務必將期貨口數縮減至平常的 1/3～1/2 並拉寬停損，避免盤中數百點洗刷被雙巴。</div></div></div><div class="playbook-item"><div class="playbook-step num">04</div><div><div class="playbook-title">止跌翻多確認訊號（未出現前不搶長多）</div><div class="playbook-body num">須同時追蹤三大轉折訊號：微台散戶多空比明顯回落（結束接刀）、外資停止連賣現貨並大舉回補臺指期空單、自營避險賣壓收斂或轉為買超；未看到法人回補與散戶降溫前，所有急彈先視為跌深反彈處理。</div></div></div></div></div></div></section>
