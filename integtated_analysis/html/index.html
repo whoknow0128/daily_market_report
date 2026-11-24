@@ -132,11 +132,23 @@ body {
   text-decoration: none; color: var(--text); transition: border-color 0.15s, transform 0.15s;
 }
 .quick-card:hover { border-color: var(--accent); transform: translateY(-1px); }
+.quick-card-head { display: flex; align-items: center; justify-content: space-between; gap: 6px; flex-wrap: wrap; }
 .quick-card strong { font-size: 0.98rem; }
-.quick-card span:last-child { font-size: 0.78rem; }
+.quick-desc { font-size: 0.78rem; }
+.schedule-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px; }
+@media (max-width: 900px) { .schedule-grid { grid-template-columns: 1fr; } }
+.schedule-item {
+  display: flex; flex-direction: column; gap: 5px; padding: 11px 14px;
+  background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px;
+}
+.schedule-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.schedule-title { font-size: 0.88rem; font-weight: 700; color: var(--text); }
+.schedule-detail { font-size: 0.77rem; color: var(--muted); line-height: 1.45; }
 table.idx-table { width: 100%; border-collapse: collapse; font-size: 0.84rem; }
 table.idx-table th, table.idx-table td { padding: 10px 12px; border-bottom: 1px solid var(--grid-line); text-align: left; }
-table.idx-table th { color: var(--muted); font-size: 0.78rem; border-bottom: 1px solid var(--border); }
+table.idx-table th { color: var(--muted); font-size: 0.78rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+.th-title { display: block; font-size: 0.80rem; font-weight: 700; color: var(--text); }
+.th-schedule { display: block; margin-top: 2px; font-size: 0.71rem; font-weight: 500; color: var(--muted); }
 
 </style>
 </head>
@@ -149,11 +161,11 @@ table.idx-table th { color: var(--muted); font-size: 0.78rem; border-bottom: 1px
         <span class="pill badge-info num">共 4 個交易日</span>
       </div>
       <div class="header-actions">
-        <span class="pill badge-neutral num">索引更新：2026/11/24 16:09</span>
+        <span class="pill badge-neutral num">索引更新：2026/11/24 16:31</span>
         <button id="themeToggle" class="theme-btn" type="button">🌓 切換淺色/深色</button>
       </div>
     </div>
-    <p class="header-sub">統一入口支援本機離線開啟與 GitHub Pages 相對路徑瀏覽（含 TXO 日盤／夜盤期權儀表板及 T86 現貨 Top 20 族群分析；期交所夜盤依「歸屬次一交易日」命名，例如週五晚間盤後歸屬下週一交易日）</p>
+    <p class="header-sub">統一入口支援本機離線開啟與 GitHub Pages 相對路徑瀏覽（含 TXO 日盤／夜盤期權儀表板、T86 現貨 Top 20 族群分析與量價關係行情判讀；以下排程均為台灣時間 UTC+8，期交所夜盤依「歸屬次一交易日」命名，例如週五晚間盤後歸屬下週一交易日）</p>
   </header>
 
   <section class="card">
@@ -161,7 +173,17 @@ table.idx-table th { color: var(--muted); font-size: 0.78rem; border-bottom: 1px
       <h2 class="card-title">最新交易日戰情傳送門</h2>
     </div>
     <div class="quick-grid">
-      <a class="quick-card" href="./txo_report_20261124.html"><span class="mini-pill badge-info">最新 TXO 日盤</span><strong>2026/11/24 臺指期權盤後戰情</strong><span class="muted">含 OI 牆、價差、散戶反向指標與籌碼趨勢</span></a><a class="quick-card" href="./t86_report_20261123.html"><span class="mini-pill badge-warn">最新 T86 現貨</span><strong>2026/11/23 三大法人 Top 20 族群分析</strong><span class="muted">五大維度目的診斷、土洋對作雷達與個股篩選</span></a><a class="quick-card" href="./vp_report_20261124.html"><span class="mini-pill badge-up">最新量價判讀</span><strong>2026/11/24 量價關係行情判讀</strong><span class="muted">TAIEX / OTC / TXF / 0050 / 00631L / 權值與高股息結構判讀</span></a><a class="quick-card" href="./txo_report_20261124_after_hours.html"><span class="mini-pill badge-neutral">最新 TXO 夜盤</span><strong>2026/11/24 臺指期權盤後(夜盤)戰情</strong><span class="muted">夜盤變動追蹤與隔日開盤防守價位</span></a>
+      <a class="quick-card" href="./txo_report_20261124.html"><div class="quick-card-head"><span class="mini-pill badge-info">最新 TXO 日盤</span><span class="mini-pill badge-neutral num">🕒 週一～五 15:35・16:30</span></div><strong>2026/11/24 臺指期權盤後戰情</strong><span class="muted quick-desc">含 OI 牆、價差、散戶反向指標與籌碼趨勢</span></a><a class="quick-card" href="./t86_report_20261123.html"><div class="quick-card-head"><span class="mini-pill badge-warn">最新 T86 現貨</span><span class="mini-pill badge-neutral num">🕒 週一～五 16:30</span></div><strong>2026/11/23 三大法人 Top 20 族群分析</strong><span class="muted quick-desc">五大維度目的診斷、土洋對作雷達與個股篩選</span></a><a class="quick-card" href="./vp_report_20261124.html"><div class="quick-card-head"><span class="mini-pill badge-up">最新量價判讀</span><span class="mini-pill badge-neutral num">🕒 週一～五 16:40</span></div><strong>2026/11/24 量價關係行情判讀</strong><span class="muted quick-desc">TAIEX / OTC / TXF / 0050 / 00631L / 權值與高股息結構判讀</span></a><a class="quick-card" href="./txo_report_20261124_after_hours.html"><div class="quick-card-head"><span class="mini-pill badge-neutral">最新 TXO 夜盤</span><span class="mini-pill badge-neutral num">🕒 週二～六 06:15</span></div><strong>2026/11/24 臺指期權盤後(夜盤)戰情</strong><span class="muted quick-desc">夜盤變動追蹤與隔日開盤防守價位</span></a>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="card-title-row">
+      <h2 class="card-title">每日自動化更新時程</h2>
+      <span class="pill badge-neutral">台灣時間 UTC+8 · 台股交易日自動執行</span>
+    </div>
+    <div class="schedule-grid">
+      <div class="schedule-item"><div class="schedule-top"><span class="schedule-title">TXO 臺指期權（一般/日盤）</span><span class="mini-pill badge-info num">🕒 週一～五 15:35・16:30</span></div><p class="schedule-detail">15:35 首波發布日盤期權籌碼；16:30 補齊當日 T86 後重產更新</p></div><div class="schedule-item"><div class="schedule-top"><span class="schedule-title">現貨三大法人 T86 Top 20 族群</span><span class="mini-pill badge-warn num">🕒 週一～五 16:30</span></div><p class="schedule-detail">16:30 抓取 TWSE 盤後買賣超與成交值後產出（約 16:32 發布）</p></div><div class="schedule-item"><div class="schedule-top"><span class="schedule-title">量價關係行情判讀</span><span class="mini-pill badge-up num">🕒 週一～五 16:40</span></div><p class="schedule-detail">16:30 排程接續 T86 與 TXO 日盤之後產出（約 16:40 完成），整合當日法人籌碼</p></div><div class="schedule-item"><div class="schedule-top"><span class="schedule-title">TXO 臺指期權（盤後/夜盤）</span><span class="mini-pill badge-neutral num">🕒 週二～六 06:15</span></div><p class="schedule-detail">05:00 收盤、約 06:00 交易所揭露夜盤籌碼後產出（歸屬次一交易日）</p></div>
     </div>
   </section>
 
@@ -173,11 +195,11 @@ table.idx-table th { color: var(--muted); font-size: 0.78rem; border-bottom: 1px
       <table class="idx-table">
         <thead>
           <tr>
-            <th>交易日期</th>
-            <th>TXO 臺指期權（一般/日盤）</th>
-            <th>TXO 臺指期權（盤後/夜盤）</th>
-            <th>現貨三大法人 T86 Top 20 族群</th>
-            <th>量價關係行情判讀</th>
+            <th><span class="th-title">交易日期</span></th>
+            <th><span class="th-title">TXO 臺指期權（一般/日盤）</span><span class="th-schedule num">🕒 週一～五 15:35・16:30</span></th>
+            <th><span class="th-title">TXO 臺指期權（盤後/夜盤）</span><span class="th-schedule num">🕒 週二～六 06:15</span></th>
+            <th><span class="th-title">現貨三大法人 T86 Top 20 族群</span><span class="th-schedule num">🕒 週一～五 16:30</span></th>
+            <th><span class="th-title">量價關係行情判讀</span><span class="th-schedule num">🕒 週一～五 16:40</span></th>
           </tr>
         </thead>
         <tbody>
